@@ -1,0 +1,213 @@
+@font-face {
+	 font-family: "C64 User";
+	 src: url("fonts/C64_User_v1.0-STYLE.ttf") format("truetype");
+}
+
+body {
+    font-family: "C64 User";
+}
+
+.slick-headerrow-column.ui-state-default {
+    padding: 0px;
+}
+
+#log-table-placeholder {
+    height: 500px;
+    box-sizing: content-box;
+    webkit-box-sizing: content-box;
+    -moz-box-sizing: border-box;
+}
+
+#log-table-placeholder *, #log-table-placeholder *:before, #log-table-placeholder *:after {
+    box-sizing: content-box;
+    webkit-box-sizing: content-box;
+    -moz-box-sizing: border-box;
+}
+
+tr.data-simulator-current-breakpoint {
+    border: solid 2px red;
+}
+tr.disa-simulator-current-instruction {
+    border: solid 2px #ccc;
+}
+.padded-row {
+    margin-bottom: 15px;
+}
+.disa-line-help {
+	display: none;
+}
+	
+.table tbody>tr>td.update-ignore {
+    color: #CCC;    
+}
+
+.iconButton {
+	font-weight: bold;
+	line-height: 1;
+	color: #000;
+	text-shadow: 0 1px 0 #fff;
+	opacity: .2;
+	filter: alpha(opacity=20);
+	padding: 0;
+	cursor: pointer;
+	background: transparent;
+	border: 0;
+	-webkit-appearance: none;
+}
+
+#disa-simulator .disa-data,
+#disa .disa-data {
+    font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+    font-size: 12px;
+}
+
+#disa-simulator input[type="text"] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075)
+}
+
+#disa-simulator td,
+#disa td {
+    text-align: left;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+#disa-simulator td.breakpoint, 
+#disa td.breakpoint {
+    padding-right: 0px;
+    padding-left: 0px;                        
+    text-align: center;   
+    width: 10px;                     
+}
+
+.breakpoint-link {
+    cursor: pointer;
+}
+
+#disa-simulator td.breakpoint div, 
+#disa td.breakpoint div {            ;
+    padding-right: 0px;
+    padding-left: 0px;
+    font-size: 2.5em;
+    line-height: 0px;            
+    color: rgb(154, 154, 172);
+}
+
+.disa-section.well {
+    padding: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#load-definitions-progress-info {
+    margin-left: 15px;
+}
+
+.table-component, #rom-information-placeholder {
+    display: none;
+}
+.setup-section {
+    margin-left: 15px;
+    margin-right: 15px;
+    background-color: #fff;
+    border-width: 1px;
+    border-color: #ddd;
+    border-radius: 4px 4px 0 0;
+    box-shadow: none;
+    border-style: solid;
+    padding: 15px 15px 15px;            
+}
+
+.load-definitions-progress {
+    margin-top: 15px;
+}
+
+.sweet-label label {
+    color: #bbb;
+    font-size: 12px;
+     font-weight: bold;
+}
+
+
+.setup-section .title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 1px
+}
+
+body {
+    padding-top: 70px;
+}
+
+#main-tabs.nav-tabs {
+    border-bottom: inherit;
+}
+
+#main-tabs.nav-tabs > li > a {
+    border-radius: inherit;
+}
+
+.graph {
+    min-height: 500px;
+}
+
+.padded-tabs {
+    margin-bottom: 15px;
+}
+
+.vertical-text {
+    display: inline-block;
+    overflow: hidden;
+    width: 1.5em;
+}
+
+.vertical-text__inner {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.5;
+    -webkit-transform: translate(0,100%) rotate(-90deg);
+    -webkit-transform-origin: 0 0;
+}
+
+    /* This element stretches the parent to be square  by using the mechanics of vertical margins  */
+.vertical-text__inner:after {
+    content: "";
+    display: block;
+    margin: -1.5em 0 100%;
+}
+
+.table {
+    width: auto;
+}
+       
+.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td
+{
+    vertical-align: middle;
+}
+
+th, td
+{
+    text-align: center;
+    
+    /*    border: 1px solid;
+    font-weight: normal;
+    padding: 0.5em;*/
+}
+
+.table-bordered {
+    border: none;
+}
+
+.selectable.selected, 
+.editable.selected {
+    background-color: red;
+}
+
+.hidden-stuff {
+    /*display: none;*/
+}

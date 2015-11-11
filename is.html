@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+<script type="text/javascript">
+var notImplementedExpressions = [
+"Single-step division (Rn ÷ Rm) 1 → T",
+"Single-step division (Rn ÷ Rm) ",
+"MSB of Rn → Q, MSB of Rm → M, M ^ Q → T ",
+"0 → M/Q/T",
+"Signed operation of Rn × Rm → MACH, MACL 32 × 32 → 64 bits",
+"Unsigned operation of Rn × Rm → MACH, MACL 32 × 32 → 64 bits",
+"Rn – 1 → Rn, when Rn is 0, 1 → T. When Rn is nonzero, 0 → T",
+"Byte in Rm is signextended → Rn ",
+"Word in Rm is signextended → Rn ",
+"Byte in Rm is zeroextended → Rn ",
+"Word in Rm is zeroextended → Rn ",
+"Signed operation of (Rn) × (Rm) + MAC → MAC 32 × 32 + 64 → 64 bits",
+"Signed operation of (Rn) × (Rm) + MAC → MAC 16 × 16 + 64 → 64 bits",
+"Rn × Rm → MACL, 32 × 32 → 32 bits 2 to 4",
+"Signed operation of Rn × Rm → MACL 16 × 16 → 32 bits 1 to 3",
+"Unsigned operation of Rn × Rm → MACL 16 × 16 → 32 bits 1 to 3",
+"If (Rn) is 0, 1 → T; 1 → MSB of (Rn)",
+"R0 & imm; if the result is 0, 1 → T",
+"(R0 + GBR) & imm; if the result is 0, 1 → T",
+"T ← Rn ← MSB ",
+"LSB → Rn → T ",
+"T ← Rn ← T ", // Wird t-bit stuff
+"T ← Rn ← 0 ",
+"MSB → Rn → T ",
+"T ← Rn ← 0 ",
+
+
+"0 → MACH, MACL ",
+"Delayed branch, stack area → PC/SR ",
+"Sleep 3",
+"PC/SR → stack area, (imm × 4 + VBR) → PC ",
+"(FRn = FRm)? 1:0 → T",
+"(FRn > FRm)? 1:0 → T",
+"(float) FPUL → FRn ",
+"(long) FRm → FPUL "
+]
+</script>
+<script type="text/javascript" src="external/jquery-2.0.3.min.js"></script>    
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript" src="is.js"></script>
+<script type="text/javascript" src="is_compile.js"></script>
+</head>
+<body></body>
+
+</html>

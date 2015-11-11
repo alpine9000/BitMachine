@@ -1,0 +1,478 @@
+a.disabled {
+   pointer-events: none;
+   cursor: default;
+}
+
+.rotate-animation {
+    
+    -webkit-animation:spin 1s linear infinite;
+    -moz-animation:spin 1s linear infinite;
+    animation:spin 1s linear infinite;
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+@font-face {
+	 font-family: "C64 User";
+	 src: url("fonts/C64_User_v1.0-STYLE.ttf") format("truetype");
+}
+
+body.retro {
+     font-family: "C64 User";
+    font-size: 12px;
+}
+
+#fueling-error-scatter-chart,
+#maf-error-scatter-chart {
+    height: 400px;
+}
+
+#injector-scale-placeholder {
+    height: 400px;
+}
+
+#maf-chart {
+    height: 400px;
+}
+
+#bitmachine-gdrive-button,
+#bitmachine-web-button,
+#bitmachine-retro-button {
+    height: 20px;
+    margin-right: 5px;
+}
+
+#bitmachine-retro-button
+{
+    cursor: pointer;
+}
+
+#bitmachine-bitos-button {
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+#bitmachine-disa-show-button {
+    display: none; 
+}
+
+body.bitos #bitmachine-disa-show-button {
+    position: absolute;
+    height: 20px;
+    top: 0px;
+    right: 0px;
+    display: block;
+}
+
+.retro h1, 
+.retro h2, 
+.retro h3, 
+.retro h4, 
+.retro h5, 
+.retro h6, 
+.retro .h1, 
+.retro .h2, eig
+.retro .h3, 
+.retro .h4, 
+.retro .h5, 
+.retro .h6 {
+    font-family: "C64 User";
+    font-size: 12px;
+}
+
+.retro .panel-title,
+.retro .form-control{
+    font-size: 12px;
+}
+
+.retro .bitmachine-header,
+.retro .bitmachine-header .btn {
+    font-family: "C64 User";
+    font-size: 12px;
+}
+
+.alertify,
+.alertify-log {
+	font-family: "C64 User";
+    font-size: 12px;
+    background: #e7e7e7;
+    color: #555;
+    text-shadow: inherit;
+    border: 1px solid #C9C9C9;
+}
+
+.alertify-log-error {
+    color: #B94A48;
+    background: #F2DEDE;
+    border: 1px solid #EED3D7;
+}
+
+.alertify-logs {
+    width: inherit;
+    max-width: 1024px;
+}
+
+#fueling-tab h4 {
+    float: left;
+}
+
+#injector-scaling {
+    padding-right: 20px;
+}
+
+#bitmachine-loading-container {
+    display: block;
+    text-align: center;
+}
+
+#bitmachine-loading-container>img {
+    /*width: 25%;*/
+}
+
+.eight-bit {
+        font-family: "C64 User";
+        font-size: 14px;
+    }
+
+@media (max-width: 992px) {
+    .eight-bit {
+        font-family: inherit;
+        font-size: inherit;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    } 
+}
+
+@media (max-width: 768px) {
+   .eight-bit {
+        font-family: inherit;
+        font-size: inherit;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    } 
+}
+
+.slick-headerrow-column.ui-state-default {
+    padding: 0px;
+}
+
+#log-table-placeholder {
+    height: 500px;
+    box-sizing: content-box;
+    webkit-box-sizing: content-box;
+    -moz-box-sizing: border-box;
+}
+
+#log-table-placeholder *, #log-table-placeholder *:before, #log-table-placeholder *:after {
+    box-sizing: content-box;
+    webkit-box-sizing: content-box;
+    -moz-box-sizing: border-box;
+}
+
+.disa-tab a {
+    min-height: 35px;
+}
+
+#disa-tabs.nav.nav-tabs .close {
+    float: none;
+    margin-left: 5px;
+    position: relative;
+    top: 2px;
+    margin-right: 5px
+}
+
+#disa-tabs.nav > li > a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#disa-tabs.nav > li.dynamic-tab > a {
+    padding-right: 5px;
+}
+
+.disa-line-container {
+    white-space: nowrap;
+}
+
+.disa-subroutine {
+    border-top: solid 1px black;
+    background-color: #F0F0F0;
+}
+
+
+.data-simulator-current-breakpoint {
+    background-color: #428bca;
+    color: white;
+}
+
+.data-simulator-current-breakpoint a,
+.data-simulator-current-breakpoint a:hover,
+.data-simulator-current-breakpoint a:focus {
+    color: white;
+}
+
+.disa-line-help.visible {
+    display: block;
+}
+
+.disa-line-help {
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 10;
+    padding-left: 162px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    position: relative;
+    display: none;
+}
+
+.disa-not-implemented,
+.disa-not-implemented a,
+.disa-not-implemented a:hover,
+.disa-not-implemented a:focus {
+    color: red;
+}
+
+
+
+.disa-simulator-current-instruction {
+    background-color: #ccc;
+}
+.padded-row {
+    margin-bottom: 15px;
+}
+
+.table tbody>tr>td.update-ignore {
+    color: #CCC;    
+}
+
+.iconButton {
+	font-weight: bold;
+	line-height: 1;
+	color: #000;
+	text-shadow: 0 1px 0 #fff;
+	opacity: .2;
+	filter: alpha(opacity=20);
+	padding: 0;
+	cursor: pointer;
+	background: transparent;
+	border: 0;
+	-webkit-appearance: none;
+}
+
+#disa-disassembly {
+    margin-top: -15px;
+}
+
+#disa-disassembly .vrow {
+    width: 100%;
+}
+
+#disa-disassembly .disa-line-help-button, 
+#disa-disassembly .vrow .disa-line-help-button {
+    float: right;
+}
+
+
+#disa-disassembly .disassembly-container {
+    border: none;
+}
+
+#disa-disassembly .disa-instruction-text {
+    min-width: 300px;
+    padding-left: 50px;
+}
+
+#disa-disassembly .disa-line-element {
+    display: inline-block;
+}
+
+#disa-disassembly .disa-data,
+#disa-simulator .disa-data {
+    font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+    font-size: 12px;
+}
+
+#disa-simulator input[type="text"] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075)
+}
+
+#disa-simulator td {
+    text-align: left;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+#disa-disassembly div.breakpoint,
+#disa-simulator td.breakpoint {
+    padding-right: 0px;
+    padding-left: 0px;                        
+    text-align: center;   
+    width: 10px;                     
+}
+
+.breakpoint-link {
+    cursor: pointer;
+}
+
+#disa-disassembly .disa-line-element.breakpoint.breakpoint-link {
+    width: 10px;
+    height: 10px;
+}
+
+#disa-disassembly .disa-line-element.breakpoint.breakpoint-link.breakpoint-active {
+    position: relative;
+    top: 8px;
+    font-size: 2.5em;
+    line-height: 0px;            
+}
+
+#disa-disassembly div.breakpoint,
+#disa-simulator td.breakpoint div {     
+    padding-right: 0px;
+    padding-left: 0px;
+    font-size: 2.5em;
+    line-height: 0px;            
+    color: rgb(154, 154, 172);
+}
+
+.disa-section.well {
+    padding: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#load-definitions-progress-info {
+    margin-left: 15px;
+}
+
+.table-component, #rom-information-placeholder {
+    display: none;
+}
+.setup-section {
+    margin-left: 15px;
+    margin-right: 15px;
+    background-color: #fff;
+    border-width: 1px;
+    border-color: #ddd;
+    border-radius: 4px 4px 0 0;
+    box-shadow: none;
+    border-style: solid;
+    padding: 15px 15px 15px;            
+}
+
+.load-definitions-progress {
+    margin-top: 15px;
+}
+
+.sweet-label label {
+    color: #bbb;
+    font-size: 12px;
+     font-weight: bold;
+}
+
+
+.setup-section .title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 1px
+}
+
+body {
+    padding-top: 70px;
+}
+
+#main-tabs.nav-tabs {
+    border-bottom: inherit;
+}
+
+#main-tabs.nav-tabs > li > a {
+    border-radius: inherit;
+}
+
+.graph {
+    min-height: 500px;
+}
+
+.padded-tabs {
+    margin-bottom: 15px;
+}
+
+.vertical-text {
+    display: inline-block;
+    overflow: hidden;
+    width: 1.5em;
+}
+
+.vertical-text__inner {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.5;
+    -webkit-transform: translate(0,100%) rotate(-90deg);
+    -webkit-transform-origin: 0 0;
+}
+
+    /* This element stretches the parent to be square  by using the mechanics of vertical margins  */
+.vertical-text__inner:after {
+    content: "";
+    display: block;
+    margin: -1.5em 0 100%;
+}
+
+.table {
+    width: auto;
+}
+       
+.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td
+{
+    vertical-align: middle;
+}
+
+th, td
+{
+    text-align: center;
+    
+    /*    border: 1px solid;
+    font-weight: normal;
+    padding: 0.5em;*/
+}
+
+.table-bordered {
+    border: none;
+}
+
+.selectable.selected, 
+.editable.selected {
+    background-color: red;
+}
+
+.hidden-stuff {
+    /*display: none;*/
+}
+
+.table tr>th.axis-edit {
+    padding: 0px;
+}
+
+.full-height {
+    overflow: auto;
+}
+
+body.bitos .bitos-hide {
+    display: none;
+}
+
+body.bitos  {
+    padding-top: 15px;
+}

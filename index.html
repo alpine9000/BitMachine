@@ -1,15 +1,946 @@
-﻿<!doctype html>
-
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="utf-8">
-
-  <title>BitMachine</title>
-  <meta name="description" content="BitMachine">
-
+<!--
+/*
+ * Copyright © Enable Software Pty Ltd 2013 - All rights reserved
+ */
+ -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="stylesheet" href="boostrap/css/bootstrap.min.css"/>
+    
+    <link rel="stylesheet" href="external/slickgrid/slick.grid.css" type="text/css"/>
+    <link rel="stylesheet" href="external/slickgrid/jquery-ui-1.8.16.custom.css" type="text/css"/>
+    <link rel="stylesheet" href="external/alertify/alertify.core.css" type="text/css"/>
+    <link rel="stylesheet" href="external/alertify/alertify.bootstrap.css" type="text/css"/>
+    <link rel="stylesheet" href="bitmachine.css" type="text/css"/>
+    <title>BitMachine</title>
 </head>
-
 <body>
-    <h1>BitMachine</h1>
+
+    <img id="bitmachine-disa-show-button" src="images/bitos.png"/>
+    
+    <div class="hidden-stuff navbar navbar-default navbar-fixed-top bitos-hide">
+      <div class="container bitmachine-header">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            
+            <ul id="main-tabs" class="nav navbar-nav nav-tabs">
+                <li><a style="max-width: 450px; white-space: nowrap; overflow: hidden" class="disabled eight-bit" data-toggle="tab" href="#map-editor" data-activate="GetMapEdit().ActivateTab()" id="map-edit-tab"></a></li>
+                <li><a class="disabled" data-toggle="tab" href="#log-viewer"  data-activate="GetLogView().ActivateTab()" id="log-view-tab">Log</a></li>
+                <li><a class="disabled" data-toggle="tab" href="#maf-viewer" data-activate="GetMafScaler().ActivateTab()" id="map-view-tab">Tune</a></li>            
+                <li><a class="disabled" data-toggle="tab" href="#disa-viewer" data-activate="GetDisaView().done(function() {this.ActivateTab()});" id="disa-viewer-tab" >Disa</a></li>            
+                <!--<li><a data-toggle="tab" href="#hex-viewer" data-activate="GetHexView().ActivateTab()" id="hex-view-tab">HEX</a></li>            -->
+                <li><a class="disabled" data-toggle="tab" href="#setup-editor" data-activate="GetSetupView().ActivateTab()" id="setup-editor-tab">Setup</a></li>            
+            </ul>
+          
+            
+          
+            <ul class="nav navbar-nav navbar-right">
+                
+                <li class="dropdown navbar-right">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown" ><img id="bitmachine-bitos-button" src="images/bitos.png"/></a>
+                </li>
+         
+                <li class="dropdown navbar-right">
+                  <a href="" class="dropdown-toggle" data-toggle="dropdown"><img id="bitmachine-web-button" src="images/HTML5_Badge_32.png"/>Web <b class="caret"></b></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="" id="load-bitos-from-web">Boot BitOS from Web</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="" id="load-bitos-fs-from-web">Initialise Filesystem from Web</a></li>
+                  </ul>
+                </li>
+         
+                <li class="dropdown navbar-right">
+                  <a href="" class="dropdown-toggle" data-toggle="dropdown" ><img id="bitmachine-gdrive-button" src="images/Google-Drive-icon.png"/>Drive <b class="caret"></b></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="" id="load-bitos-from-gdfs">Boot BitOS from Google Drive</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="" id="save-to-gdfs">Save Map to Google Drive</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="" id="install-drive-app">Install Drive App</a></li>
+                    <li><a href="" id="load-bitos-fs">Initialise Filesystem from Google Grive</a></li>
+                    
+                  </ul>
+                </li>
+                
+                <li class="dropdown navbar-right">
+                  <a href="" class="dropdown-toggle" data-toggle="dropdown" ><img id="bitmachine-retro-button" src="favicon.png"/>Local <b class="caret"></b></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="" id="load-bitos-from-local">Boot BitOS from Local</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="" id="load">Load Map</a></li>
+                    <li><a href="" id="save">Download Map</a></li>
+                  </ul>
+                </li>
+         
+                
+            </ul>
+        </div>
+      </div>
+    </div>
+    <div id="bitmachine-loading-container" class="container">      
+        <!--<img src="images/space_invader_255.png"/>-->
+        <div class="alert eight-bit" id="bit-machine-loading">Loading...</div>
+    </div>
+    <div id="bitmachine-main-container" class="hidden-stuff tab-content">
+        <div id="map-editor" class="container tab-pane">        
+            <input id="file" type="file" multiple="" style="display: none" />                
+            <input id="log-file" type="file" multiple="" style="display: none" />
+            <div class="row">          
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <input id="table-search" class="form-control" type="text"/>
+                        </div>
+                        <div class="col-sm-1 ">
+                            <button class="btn btn-default" id="table-list-toggle-button"><span class="glyphicon glyphicon-chevron-up"></span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7"><h4 id="table-heading"></h4></div>
+                <div class="col-md-1"><button id="rescale-current-table" class="pull-right btn-default btn">Rescale</button></div>
+                
+            </div>
+            <div class="row">
+                <div class="col-md-4 full-height" id="table-list-placeholder"></div>
+                <div class="col-md-8 table-component" id="table-main">
+                    <ul id="map-tabs" class="nav nav-tabs padded-tabs">
+                        <li class="active"><a id="table-map-select" href="#table-placeholder" data-toggle="tab">Map</a></li>
+                        <li><a href="#table-description" data-toggle="tab">Description</a></li>
+                        <li><a href="#table-graph-placeholder" data-toggle="tab" data-activate="GetMapPlot().ActivateTab()">Graph</a></li>
+                        <li><a href="#table-definition-placeholder" data-toggle="tab" >Definition</a></li>                
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="table-placeholder"></div>
+                        <div class="tab-pane" id="table-description"></div>
+                        <div class="tab-pane" id='table-graph-placeholder'></div>
+                        <div class="tab-pane" id='table-definition-placeholder'></div>
+                    </div>
+                </div>
+                <div class="col-md-8" id="rom-information-placeholder"></div>
+            </div>
+                        
+        </div>
+        <div id="disa-viewer" class="container tab-pane">                            
+            <div class="row ">          
+                <div class="bitos-hide col-md-4">
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <input id="disa-symbol-search" class="form-control" type="text"/>
+                        </div>
+                        <div class="col-sm-1 hidden-sm hidden-xs">
+                            <button class="btn btn-default" id="disa-symbol-list-toggle-button"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                        </div>
+                    </div>
+                    <div class="form-group row" style="display: none">
+                        <div class="col-sm-10">
+                            <input id="ios-input" class="form-control" type="text"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 bitos-hide">
+                <!--<a href="data/rej09b0046_sh7058.pdf" target="_blank">SH7058 Hardware Manual</a>-->
+                <div class="btn-group options-toggle" data-toggle="buttons">
+                  <label class="btn btn-default">
+                    <input type="checkbox" data-target="#disa-breakpoints"> BP
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="checkbox" checked data-target="#disa-system-registers"> Sr
+                  </label>
+                  <label class="btn btn-default">                  
+                    <input type="checkbox" data-target="#disa-data-registers"> Rn
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="checkbox" data-target="#disa-fp-data-registers"> FRn
+                  </label>
+                  <label class="btn btn-default">
+                    <input  type="checkbox" checked id="disa-show-float-data" > Floats
+                  </label>
+                  <label class="btn btn-default ">
+                    <input type="checkbox" data-target="#disa-instruction-info"> Instruction
+                  </label>
+                  <label class="btn btn-default">
+                    <input  type="checkbox" data-target="#disa-fp-data-registers,#disa-data-registers,#disa-system-registers" > All
+                  </label>
+                </div>
+                <div class="btn-toolbar pull-right " role="toolbar" style="margin: 0;">
+                    <div class=" btn-group-sm">                        
+                          <button id="disa-simulator-step" type="button" class="btn btn-default" title="Step">S</button>
+                          <button id="disa-simulator-breakpoint" type="button" class="btn btn-default" title="Breakpoint">B</button>
+                          <button id="disa-simulator-execute" type="button" class="btn btn-default" title="Execute">E</button>
+                          <button id="disa-simulator-reset" type="button" class="btn btn-default" title="Reset">R</button>
+                          <button id="disa-simulator-goto" type="button" class="btn btn-default" title="Dissplay Address">G</button>
+                          <button id="disa-simulator-jump" type="button" class="btn btn-default" title="Jump To">J</button>
+                          <button id="disa-simulator-find" type="button" class="btn btn-default" title="Find">F</button>
+                          <button id="disa-simulator-rendertable" type="button" class="btn btn-default" title="Refresh references">Z</button>
+                          <button id="disa-analyse" type="button" class="btn btn-default">Analyse ROM</button>
+                        </div>                       
+                    </div>
+				</div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="progress bitos-progress hidden" >
+                        <div id="bitos-progress" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                    </div>      
+                </div>      
+            </div>
+            <div class="row">
+                <div class="col-md-4 bitos-hide" style="display: none" id="disa-symbol-list-placeholder"></div>
+                <div class="col-md-8" id="disa-main">                
+                        
+                    <div id="disa-simulator" class="container bitos-hide">                                
+                        <div id="disa-system-registers" class="row disa-data hidden">                                    
+                            <div class="col-lg-1">PC*</div><input type="text" class="simulator-register col-lg-2" id="disa-register-address"  data-set="cpu.SetPC(" value="0000"/>
+                            <div class="col-lg-1">PC</div><input type="text" class="simulator-register col-lg-2" id="disa-register-pc" data-set="cpu.SetPC(" value="0000"/>
+                            <div class="col-lg-1">PR</div><input type="text" class="simulator-register col-lg-2" id="disa-register-pr"  data-set="cpu.SetPR(" value="0000"/>
+                            <div class="col-lg-1">GBR</div><input type="text" class="simulator-register col-lg-2" id="disa-register-gbr"  data-set="cpu.SetGBR("value="0000"/>
+                            <div class="col-lg-1">VBR</div><input type="text" class="simulator-register col-lg-2" id="disa-register-vbr"  data-set="cpu.SetVBR("value="0000"/>
+                            <div class="col-lg-1">SR</div><input type="text" class="simulator-register col-lg-2" id="disa-register-sr"  data-set="cpu.SetSR("value="0000"/>
+                            <div class="col-lg-1">T</div><input type="text" class="simulator-register col-lg-2" id="disa-register-t"  data-set="cpu.SetT("value="0"/>
+                            <div class="col-lg-1">MACL</div><input type="text" class="simulator-register col-lg-2" id="disa-register-macl"  data-set="cpu.SetMACL("value="0"/>
+                            <div class="col-lg-1">MACH</div><input type="text" class="simulator-register col-lg-2" id="disa-register-mach"  data-set="cpu.SetMACH("value="0"/>
+                            <div class="col-lg-1">FPS</div><span id="disa-fps" class="col-lg-2">0</span>
+                        </div>
+                        <div id="disa-data-registers" class="row disa-data hidden">
+                            <div class="col-lg-1">R0</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r0" data-set="cpu.SetR(0," value="0000"/>
+                            <div class="col-lg-1">R1</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r1" data-set="cpu.SetR(1," value="0000"/>
+                            <div class="col-lg-1">R2</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r2" data-set="cpu.SetR(2," value="0000"/>
+                            <div class="col-lg-1">R3</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r3" data-set="cpu.SetR(3," value="0000"/>
+                            <div class="col-lg-1">R4</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r4" data-set="cpu.SetR(4," value="0000"/>
+                            <div class="col-lg-1">R5</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r5" data-set="cpu.SetR(5," value="0000"/>
+                            <div class="col-lg-1">R6</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r6" data-set="cpu.SetR(6," value="0000"/>
+                            <div class="col-lg-1">R7</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r7" data-set="cpu.SetR(7," value="0000"/>
+                            <div class="col-lg-1">R8</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r8" data-set="cpu.SetR(8," value="0000"/>
+                            <div class="col-lg-1">R9</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r9" data-set="cpu.SetR(9," value="0000"/>
+                            <div class="col-lg-1">R10</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r10" data-set="cpu.SetR(10," value="0000"/>
+                            <div class="col-lg-1">R11</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r11" data-set="cpu.SetR(11," value="0000"/>
+                            <div class="col-lg-1">R12</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r12" data-set="cpu.SetR(12," value="0000"/>
+                            <div class="col-lg-1">R13</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r13" data-set="cpu.SetR(13," value="0000"/>
+                            <div class="col-lg-1">R14</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r14" data-set="cpu.SetR(14," value="0000"/>
+                            <div class="col-lg-1">R15</div><input type="text" class="simulator-register col-lg-2" id="disa-register-r15" data-set="cpu.SetR(15," value="0000"/>                                    
+                        </div>
+                        <div id="disa-fp-data-registers" class="row disa-data hidden">
+                            <div class="col-lg-1">FR0</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr0" data-set="cpu.SetFR(0," value="0000"/>
+                            <div class="col-lg-1">FR1</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr1" data-set="cpu.SetFR(1," value="0000"/>
+                            <div class="col-lg-1">FR2</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr2" data-set="cpu.SetFR(2," value="0000"/>
+                            <div class="col-lg-1">FR3</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr3" data-set="cpu.SetFR(3," value="0000"/>
+                            <div class="col-lg-1">FR4</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr4" data-set="cpu.SetFR(4," value="0000"/>
+                            <div class="col-lg-1">FR5</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr5" data-set="cpu.SetFR(5," value="0000"/>
+                            <div class="col-lg-1">FR6</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr6" data-set="cpu.SetFR(6," value="0000"/>
+                            <div class="col-lg-1">FR7</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr7" data-set="cpu.SetFR(7," value="0000"/>
+                            <div class="col-lg-1">FR8</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr8" data-set="cpu.SetFR(8," value="0000"/>
+                            <div class="col-lg-1">FR9</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr9" data-set="cpu.SetFR(9," value="0000"/>
+                            <div class="col-lg-1">FR10</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr10" data-set="cpu.SetFR(10," value="0000"/>
+                            <div class="col-lg-1">FR11</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr11" data-set="cpu.SetFR(11," value="0000"/>
+                            <div class="col-lg-1">FR12</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr12" data-set="cpu.SetFR(12," value="0000"/>
+                            <div class="col-lg-1">FR13</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr13" data-set="cpu.SetFR(13," value="0000"/>
+                            <div class="col-lg-1">FR14</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr14" data-set="cpu.SetFR(14," value="0000"/>
+                            <div class="col-lg-1">FR15</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fr15" data-set="cpu.SetFR(15," value="0000"/> 
+                            <div class="col-lg-1">FPUL</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fpul" data-set="cpu.SetFPUL(" value="0000"/>
+                            <div class="col-lg-1">FPSCR</div><input type="text" class="simulator-register col-lg-2" id="disa-register-fpscr" data-set="cpu.SetFPSCR(" value="0000"/>                                    
+                            
+                        </div>
+
+                        <div id="disa-instruction-info" class="hidden">
+                             <div class="row padded-row disa-data">
+                                <div class="col-lg-1">i</div><div class="col-lg-2" id="disa-instruction-i">0000</div>
+                                <div class="col-lg-1">d</div><div class="col-lg-2" id="disa-instruction-d">0000</div>
+                                <div class="col-lg-1">m</div><div class="col-lg-2" id="disa-instruction-m">0000</div>
+                                <div class="col-lg-1">n</div><div class="col-lg-2" id="disa-instruction-n">0000</div>
+                            </div>
+
+                            <div class="row padded-row disa-data">
+                                <div class="col-lg-3" id="disa-instruction"></div>                                
+                                <div class="col-lg-3" id="disa-instruction-text"></div>                                
+                                <div class="col-lg-6" id="disa-instruction-description"></div>
+                            </div>
+
+                            <div class="row disa-data">
+                                <div class="col-lg-12" id="disa-side-effects"></div>
+                            </div>
+                        </div>
+
+                        <div class="row padded-row disa-data hidden" id="disa-breakpoints">
+                            <div id="disa-breakpoint-list" class="col-lg-12">
+                            </div>
+                        </div>
+
+                        <div class="row padded-row col-lg-12" id="disa-simulator-source"></div>                                                            
+                    </div>
+                    <ul id="disa-tabs" class="nav nav-tabs padded-tabs bitos-hide">
+                        <li class="disa-tab active"><a href="#disa-video-tab" data-toggle="tab">Video</a></li>
+                        <li class="disa-tab"><a id="disa-disassembly-tab" href="#disa-disassembly" data-address="0" data-toggle="tab">ASM</a></li>
+                    </ul>
+                    <div class="tab-content disa-output">
+                        <div id="disa-video-tab" class="tab-pane in active">
+                            <canvas id="disa-display" width="640" height="480" tabindex="1" style="border:1px solid #000000;">
+                            </canvas>
+                        </div>
+                        <div id="disa-disassembly" class="tab-pane">
+                            
+                        </div>
+                    </div>
+                </div>                
+            </div>
+                        
+        </div>
+        <div id="maf-viewer" class="container tab-pane">      
+            <div class="row" id="maf-viewer-help">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="alert text-center eight-bit">
+                        <p>A ROM and log files must be loaded to perform tuning.</p>                        
+                    </div>                
+                </div>
+            </div>      
+            <div class="col-md-12 maf-viewer-controls">
+                <ul id="maf-tabs" class="nav nav-tabs padded-tabs">
+                    <li class="active"><a  href="#fueling-tab" data-toggle="tab" data-activate="GetMafScaler().FuelingTabSelected()">Fueling</a></li>
+                    <li class=""><a  href="#timing-tab" data-toggle="tab" data-activate="">Timing</a></li>
+                    <li class=""><a  href="#boost-tab" data-toggle="tab" data-activate="">Boost</a></li>
+                    <li class=""><a  href="#dbw-tab" data-toggle="tab" data-activate="">DBW</a></li>
+                    <li class=""><a  href="#avcs-tab" data-toggle="tab" data-activate="">AVCS</a></li>
+                </ul>
+                <div class="tab-content">
+                  
+                    <div class="tab-pane graph in active" id="fueling-tab" >
+                        <div class="row">
+                            <h4 class="eight-bit">MAF Error</h4>
+                            
+                            <div class='pull-right'>
+                                <button id="apply-maf-corrections-to-logs" class="btn btn-danger">Simulate</button>                        
+                                <button id="save-maf" class="btn btn-danger">Update Map</button>                        
+                            </div>
+                            <div class='pull-right eight-bit'>Calculated Injector Scaling: <span id="injector-scaling"></span></div>
+                        </div>
+                        <div id="maf-error-scatter-chart"></div>
+                        
+                        <div class="row">
+                            <h4 class="eight-bit">Load Compensation Error</h4>
+                            <div class='pull-right'>
+                                <button id="apply-load-comp-corrections-to-logs" class="btn btn-danger">Simulate</button>                        
+                                <button id="save-mrp-load-compensation" class="btn btn-danger">Update Map</button>                        
+                            </div>
+                        </div>
+                        <div id="rpm-error-scatter-chart"></div>
+                        <div class="row">
+                            <h4 class="eight-bit">Pulse Width/RPM Error</h4>
+                        </div>
+                        <div id="per-injector-error-scatter-chart"></div>
+                        <div class="row">
+                            <h4 class="eight-bit">MAF Sensor Scaling</h4>
+                            <button id="smooth-maf" class="pull-right btn btn-default">Smooth</button>
+                        </div>
+                        <div id="maf-chart"></div>
+                        <div class="row">
+                            <h4 class="eight-bit">MAF Sensor Scaling Data</h4>
+                        </div>
+                        <div class="row">
+                            <div id="maf-table-placeholder" class="col-lg-2"></div>
+                            <div id="corrected-maf-table-placeholder" class="col-lg-2"></div>
+                        </div>
+                        <div class="row">
+                            <h4 class="eight-bit">Injector Scaling</h4>
+                        </div>
+                        <div id="injector-scale-placeholder" class="col-lg-12"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select id="fueling-error-scatter-chart-select" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div id="fueling-error-scatter-chart"></div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+        <div id="log-viewer" class="container tab-pane">    
+            <div id="log-view-content">
+                <div class="row" id="log-viewer-help">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="alert eight-bit text-center">
+                            <p>No log files loaded. Load CSV log files to continue.</p>                        
+                        </div>                
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="log-tabs-placeholder" class="col-lg-12"></div>
+                    <div id="log-table-placeholder" class="col-lg-12 tab-content"></div>
+                </div>
+            </div>
+            <div id="graph-view-content" style="display: none">
+                <div class="row">
+                    <button id="close-graph-view" class="pull-right btn btn-default ">Done</button>                                                
+                </div>
+                <div class="row">
+                    <div id="graph-placeholder" class="col-lg-12 graph">
+                    </div>                
+                </div>
+            </div>
+        </div>
+        <div id="graph-viewer" class="container tab-pane">            
+            <div class="row" id="graph-viewer-help">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="alert eight-bit">
+                        <p>To graph data:</p>
+                        <ol>
+                            <li>Load log file.</li>
+                            <li>Click the columns you wish to graph;</li>
+                            <li>then select the Graph page.</li>
+                        </ol>                        
+                    </div>                
+                </div>
+            </div>
+        </div>
+        <!--<div id="hex-viewer" class="container tab-pane">            
+            <div class="row">
+                <pre id="hex-viewer-placeholder" class="col-lg-12">
+                    
+                </pre>                
+            </div>
+        </div>-->
+        <div id="setup-editor" class="container tab-pane">            
+            <div class="row">
+                <form  role="form" class="setup-section col-lg-12">                    
+                    <input type="file" id="load-definitions" style="display: none"/>
+                    <input type="file" id="load-logger-definitions" style="display: none"/>
+                    <label >Definitions</label>
+                    <div class="form-group">                        
+                        <p class="help-block">Please select a zip file containing ECUFlash definitions.</p>                        
+                        <p class="help-block">Don't have definitions?  Download them here: <a href="data/defs.zip">ECUFlash Definitions</a>.</p>
+                        <div>
+                            <button id="load-definitions-button" type="submit" class="btn btn-default ">Select ECUFlash definitions</button>                                                
+                            <button id="load-logger-definitions-button" type="submit" class="btn btn-default ">Select Romraider Logger definitions</button>                                                
+                            <span id="load-definitions-progress-info"></span>
+                            
+                            <div class="load-definitions-progress" style="display: none">
+                                <div class="progress load-definitions-progress" >
+                                    <div id="load-definitions-progress" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                                </div>      
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <label>Options</label>
+                    <div id="options-list-placeholder" class="sweet-label form-horizontal">
+
+                    </div>
+                    <button id="save-options" class="btn btn-default">Save</button>
+                </form>
+            </div>
+            <div class="row">
+                <div id="definitions-list-placeholder">
+                    
+                </div>
+            </div>
+         </div>
+    </div>
+    <div class="modal fade" id="definition-not-found-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">ECU Definition not found</h4>
+        </div>
+        <div class="modal-body">
+            Please upload ECUFlash definitions first in the <a href="" onclick="$('#setup-editor-tab').click()" data-dismiss="modal">Setup tab</a>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>          
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div>
+
+    <script type="text/javascript">
+        _GLOBAL_CLIENT_ID = '924397246859.apps.googleusercontent.com';
+    </script>
+    <script type="text/javascript" src="external/jquery-2.0.3.min.js"></script>    
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <script type="text/javascript" src="external/underscore-min.js"></script>    
+    <script type="text/javascript" src="external/alertify/alertify.min.js"></script>    
+    <script type="text/javascript" src="external/FileSaver.min.js"></script>    
+    <script type="text/javascript" src="external/jquery.csv-0.71.min.js"></script>
+    
+    <!-- for firefox -->
+    <script type="text/javascript" src="external/idb.filesystem.js"></script>
+    
+    <script type="text/javascript" src="external/filer.js"></script>    
+    <script type="text/javascript" src="external/handlebars.min.js"></script>
+    <script type="text/javascript" src="external/canvasjs.min.js"></script>    
+    <script type="text/javascript" src="external/sprintf.min.js"></script>
+    <script type="text/javascript" src='external/3DPlot.min.js'></script>
+    <script type="text/javascript" src='external/matrix_processor.min.js'></script>
+    <script type="text/javascript" src="require.js"></script>    
+    
+    <script type="text/javascript" src="common.js"></script> 
+    <script type="text/javascript" src="options.js"></script> 
+    <script type="text/javascript" src="gui.js"></script> 
+    <script type="text/javascript" src="map.js"></script>     
+    <script type="text/javascript" src="gfile.js"></script>    
+    <script type="text/javascript" src="file.js"></script>    
+    <script type="text/javascript" src="webfile.js"></script>    
+    <script type="text/javascript" src="colormap.js"></script>        
+    <script type="text/javascript" src="map-edit.js"></script>
+    <script type="text/javascript" src="map-plot.js"></script>
+    <script type="text/javascript" src="log-view.js"></script>
+    <script type="text/javascript" src="maf-scale.js"></script>
+    <!--<script type="text/javascript" src="hex-view.js"></script>    -->
+    <script type="text/javascript" src="definitions.js"></script>
+    <script type="text/javascript" src="checksum.js"></script>
+    <script type="text/javascript" src="map-find.js"></script>        
+    <script type="text/javascript" src="disa.js"></script>  
+    <script type="text/javascript" src="disa-view.js"></script>
+
+
+
+    <script id="table-definition-template" type="text/x-handlebars-template">                
+        <form role="form">
+            <div class="form-group">
+                <label for="table-name">Name</label>
+                <input id="table-name" class="form-control" value="{{table.name}}"/>
+            </div>
+            
+            <div class="form-group">
+                <label for="table-base-name">Base table</label>
+                <select class="form-control" id="table-base-name">
+                    <option selected></option>
+                    {{#each unassociatedTables}}
+                        <option >{{this}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="table-category">Category</label>
+                 <select class="form-control" id="table-category">
+                    {{#each categories}}
+                        {{#equal this ../table.category}}
+                        <option selected>{{this}}</option>
+                        {{else}}
+                        <option >{{this}}</option>
+                        {{/equal}}
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="table-scaling">Map Scaling</label>
+                <select class="form-control" id="table-scaling">
+                    {{#each scalings}}
+                        {{#equal this ../table.scaling.name}}
+                        <option selected>{{this}}</option>
+                        {{else}}
+                        <option>{{this}}</option>
+                        {{/equal}}
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="table-address">Map Address</label>
+                <input id="table-address" class="form-control" value="{{table.address}}"/>
+            </div>
+            <div class="form-group">
+                <label for="table-x-axis-scaling">X-Axis Scaling</label>
+                <select data-name="{{table.xAxis.name}}" class="form-control" id="table-x-axis-scaling">
+                    {{#each scalings}}
+                        {{#equal this ../table.xAxis.scaling.name}}
+                        <option selected>{{this}}</option>
+                        {{else}}
+                        <option >{{this}}</option>
+                        {{/equal}}
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="table-address">X-Axis Address</label>
+                <input id="table-x-axis-address" class="form-control" value="{{table.xAxis.address}}"/>
+            </div>
+             <div class="form-group">
+                <label for="table-y-axis-scaling">Y-Axis Scaling</label>
+                <select data-name="{{table.yAxis.name}}" class="form-control" id="table-y-axis-scaling">
+                    {{#each scalings}}
+                       {{#equal this ../table.yAxis.scaling.name}}
+                        <option  selected>{{this}}</option>
+                        {{else}}
+                        <option>{{this}}</option>
+                        {{/equal}}
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="table-address">Y-Axis Address</label>
+                <input id="table-y-axis-address" class="form-control" value="{{table.yAxis.address}}"/>
+            </div>
+            <button id="table-definition-save" type="submit" class="btn btn-default">Save</button>
+        </form>
+    </script>
+
+    <script id="disa-tab-template" type="text/x-handlebars-template">                
+        <li id="disa-dynamanic-tab-{{address}}" class="dynamic-tab"><a  href="#disa-disassembly" data-address="{{address}}" data-activate="var item = this; GetDisaView().done(function() { this.ActivateSymbolView({{address}}, item);});" data-toggle="tab" >{{#if write}}*{{/if}}{{symbol}}  <button type="button" class="close close-tab disa-close-tab" data-id="{{address}}" aria-hidden="true">×</button></a></li>
+    </script>
+    
+    <script id="breakpoint-list-template" type="text/x-handlebars-template">                
+            <div >Breakpoints</div>
+        {{#each this}}
+            <span><a class="disa-link" data-address="{{this}}" href="">{{this}}</a> <a class="disa-delete-breakpoint" data-address="{{this}}" href=""><span class="glyphicon glyphicon-remove"> </span></a></span>&nbsp;&nbsp
+        {{/each}}        
+    </script>
+    <script id="log-view-template" type="text/x-handlebars-template">        
+        <table class="tab-pane table table-bordered table-condensed"  id="log{{clean name}}" data-name="{{name}}">            
+            {{#each data}}
+                <tr>                                                                
+                    {{#each this}}
+                        <td class="selectable" data-index="{{@index}}">{{this}}</td>                
+                    {{/each}}
+                </tr>         
+            {{/each}}   
+        </table>
+    </script>
+    <script id="log-tabs-template" type="text/x-handlebars-template"> 
+      <div class="row"><button id="graph-selected-logs" class="pull-right btn btn-default">Graph</button></div>
+      <ul id="log-tabs" class="nav nav-tabs padded-tabs">
+          {{#each this}}
+                <li><a data-csv="{{this.name}}" href="#log{{clean this.name}}" data-toggle="tab">{{this.name}}</a></li>
+          {{/each}}                
+      </ul>
+    </script>
+    <script id="table-template" type="text/x-handlebars-template">   
+        <table class="table table-bordered table-condensed" data-name="{{name}}">
+                <tr>
+                    <th colspan="{{add xAxis.elements 3}}">{{xAxis.name}} ({{xAxis.scaling.units}})</th>
+                </tr>       
+                <tr>
+                    
+                    <th rowspan="{{add yAxis.elements 2}}"><div class="vertical-text"><div class="vertical-text__inner">{{yAxis.name}} ({{yAxis.scaling.units}})</div></div></th>                
+                    <th colspan="2" rowspan="2"></th>
+                    {{#each xAxis.data}}
+                        <th>{{this.display}}</th>
+                    {{/each}}
+                </tr>   
+                <tr>
+                    {{#each xAxis.data}}
+                        <th class="axis-edit "><input class="xaxis-edit" type="text" size=4/></th>
+                    {{/each}}
+                </tr>  
+                {{#each data}}
+                    <tr data-y-index="{{@index}}">
+                        <th>{{axisValue ../yAxis @index}}</th>
+                        <th class="axis-edit"><input class="yaxis-edit" size="4" type="text"/></th>
+                        {{#each this}}                
+                            <td class="editable map-cell" data-x-index="{{@index}}"">{{this.display}}</td>
+                        {{/each}}
+                    </tr>
+                {{/each}}
+            <tr>
+                <th colspan="{{add xAxis.elements 3}}">{{scaling.units}}</th>
+            </tr>  
+        </table>
+
+    </script>
+    <script id="options-template" type="text/x-handlebars-template">                
+        {{#each this}}
+            <div class="form-group">
+                <label for="inputEmail1" class="col-lg-2 control-label">{{prettyCamel @key}}</label>
+                <div class="col-lg-10">
+                    <input class="options-editor-value form-control" type="text"  data-name="{{@key}}" value="{{this}}"/>
+                </div>
+            </div>
+        {{/each}}            
+    </script>
+    <script id="rom-information-template" type="text/x-handlebars-template">                
+        <div class="form-horizontal">
+            {{#each this}}
+                <div class="form-group sweet-label">
+                    <label for="" class="col-lg-4 control-label">{{prettyCamel @key}}</label>
+                    <div class="col-lg-8">
+                        <span class="form-control" type="text"  data-name="{{@key}}" >{{this}}</span>
+                    </div>
+                </div>
+            {{/each}}            
+         </div>
+        <button id="search-for-undefined" class="btn btn-default pull-right">Search for Undefined Tables</button>
+        <button id="download-definition" class="btn btn-default pull-right">Download ROM Definition</button>
+        <button id="reset-cache" class="btn btn-default pull-right">Reset Cache</button>
+    </script>
+    <script id="table-1D-template" type="text/x-handlebars-template">        
+        <table class="table table-bordered table-condensed"  data-name="{{name}}">            
+            <tr>                                                
+                <th>{{scaling.units}}</th>
+                <td class="editable map-cell">{{data.display}}</td>                
+            </tr>            
+        </table>
+    </script>
+    <script id="definitions-list-template" type="text/x-handlebars-template">        
+
+        <table class="table table-bordered table-condensed setup-section"  data-name="{{name}}">            
+            <tr>                                                
+                <th>xmlid</th>
+                <th>ecuid</th>
+                <th>flashmethod</th>
+                <th>checksummodule</th>
+                <th>internalidaddress</th>
+                <th>internalidstring</th>
+                <th>make</th>
+                <th>market</th>
+                <th>memmodel</th>
+                <th>model</th>
+                <th>submodel</th>
+                <th>transmission</th>
+                <th>xmlid</th>
+                <th>year</th>
+            </tr>       
+            {{#each this}}
+            <tr>                                                
+                <th>{{xmlid}}</th>
+                <td>{{ecuid}}</td>
+                <td>{{flashmethod}}</td>
+                <td>{{checksummodule}}</td>
+                <td>{{internalidaddress}}</td>
+                <td>{{internalidstring}}</td>
+                <td>{{make}}</td>
+                <td>{{market}}</td>
+                <td>{{memmodel}}</td>
+                <td>{{model}}</td>
+                <td>{{submodel}}</td>
+                <td>{{transmission}}</td>
+                <td>{{xmlid}}</td>
+                <td>{{year}}</td>
+            </tr>       
+            {{/each}}     
+        </table>
+    </script>
+    <script id="table-2D-template" type="text/x-handlebars-template">        
+        <table class="table table-bordered table-condensed"  data-name="{{name}}">
+            {{#each data}}
+            <tr>
+                {{#equal @index 0}}
+                {{#if ../../yAxis.name}}
+                <td rowspan="{{../../../yAxis.elements}}">
+                    <div class="vertical-text">
+                        <div class="vertical-text__inner">{{../../../yAxis.name}} {{#if ../../../yAxis.scaling.units}} ({{../../../../yAxis.scaling.units}}){{/if}}</div>
+                    </div>
+                </td>
+                {{/if}}
+                {{/equal}}
+                <th>{{axisValue ../yAxis @index}}</th>
+                <td class="editable map-cell" data-y-index="{{@index}}">{{this.display}}</td>
+                {{#equal @index 0}}                                
+                <td rowspan="{{../../yAxis.elements}}">
+                    <div class="vertical-text">
+                        <div class="vertical-text__inner">{{../../scaling.units}}</div>
+                    </div>
+                </td>
+                {{/equal}}
+            </tr>
+            {{/each}}
+        </table>
+    </script>
+	<script id="disa-add-symbol-template" type="text/x-handlebars-template">    
+		<button class="iconButton disa-add-symbol-button"><i class="glyphicon glyphicon-comment"></i></button>
+	</script>
+	
+	<script id="-disa-line" type="text/x-handlebars-template">    
+	    <div data-something="fdf" {{#if currentBreakpoint}} class="data-simulator-current-breakpoint"{{else}}class="{{#if simulatorNextInstruction}} disa-simulator-current-instruction {{/if}} "{{/if}}>
+            <div class="disa-line-element breakpoint breakpoint-link {{#if breakpoint }}breakpoint-active{{/if}}" data-address="{{address}}">
+                <div>{{#if breakpoint}}&bull;{{else}} {{/if}}</div>
+            </div>
+            <div class="disa-line-element disa-data" style="white-space: nowrap" ><a href='' class='disa-address' data-address="{{address}}" data-is-data="{{info.isData}}">{{hex address 6}}</a> <button class="iconButton disa-add-symbol-button"><i class="glyphicon glyphicon-comment"></i></button> {{hex word 4}}</div>
+            <div class="disa-line-element disa-data disa-instruction-text" style="white-space: nowrap" >{{{info.text}}}</div>
+            <div class="disa-line-element disa-data" style="white-space: nowrap" >
+                {{#if info.target}}                                                        
+                    C&rarr;<a class='disa-link' title='{{hex info.target.data 6}}' data-address='{{info.target.address}}' href=''>({{hex info.target.address 6}})</a>
+                {{/if}}
+            </div>                    
+			<div class="disa-line-element disa-line-help-button"><button data-line-help-id="disa-line-help-{{hex address}}" class="disa-line-help-button iconButton"><i class="glyphicon glyphicon-info-sign"></i></button></div>
+            <div class="disa-line-element disa-data" style="white-space: nowrap" >{{{info.symbol}}} {{info.sideEffects}}</div>
+         </div>
+		 <div class="disa-line-help" id="disa-line-help-{{hex address}}">
+            <div class="breakpoint"></div>
+			<div class="disa-data" style="white-space: nowrap" >{{{info.spec}}}</div>
+            <div colspan="5" class="disa-data" style="white-space: nowrap; " >{{info.description}}</div>
+		 </div>
+		 <div>
+            <div class="breakpoint"></div>
+			<div  class="disa-data" style="white-space: nowrap; max-width: 100px;" >{{#each info.references}}<a class='disa-link' title='{{hex this.referenceData 6}}' data-address='{{hex this.referenceAddress 6}}' href=''>{{{disaRefType this.type this.referenceAddress}}}</a> {{/each}}</div>
+		    </div>
+		</div>
+	</script>
+	
+	<script id="disa-line" type="text/x-handlebars-template">    
+	    <div>
+    	    <div class="disa-line-container{{#if info.notImplemented }} disa-not-implemented{{/if}} {{#if info.subroutine }} disa-subroutine {{/if}} {{#if currentBreakpoint}}data-simulator-current-breakpoint"{{else}}{{#if simulatorNextInstruction}} disa-simulator-current-instruction {{/if}}{{/if}}">
+                <div class="disa-line-element breakpoint breakpoint-link {{#if breakpoint }}breakpoint-active{{/if}}" data-address="{{address}}">
+                    <div>{{#if breakpoint}}&bull;{{else}} {{/if}}</div>
+                </div>
+                <div class="disa-line-element disa-data" style="white-space: nowrap" ><a href='' class='disa-address' data-address="{{address}}" data-is-data="{{info.isData}}">{{hex address 6}}</a> <button class="iconButton disa-add-symbol-button"><i class="glyphicon glyphicon-comment"></i></button> {{hex word 4}}</div>
+                <div class="disa-line-element disa-data disa-instruction-text" style="white-space: nowrap" >{{{info.text}}}</div>
+                <div class="disa-line-element disa-data" style="white-space: nowrap" >{{{info.symbol}}}</div>
+                <div class="disa-line-element disa-data" style="white-space: nowrap" >
+                    {{#if info.target}}                                                        
+                        C&rarr;<a class='disa-link' title='{{hex info.target.data 6}}' data-address='{{info.target.address}}' href=''>({{hex info.target.address 6}})</a>
+                    {{/if}}
+                </div>                    
+			    <div class="disa-line-element disa-line-help-button"><button data-line-help-id="disa-line-help-{{hex address}}" class="disa-line-help-button iconButton"><i class="glyphicon glyphicon-info-sign"></i></button></div>
+                <div class="disa-line-element disa-data" style="white-space: nowrap" >{{info.sideEffects}}</div>
+                <div  class="disa-line-element disa-data">{{#each info.references}}<a class='disa-link' title='{{hex this.referenceData 6}}' data-address='{{this.referenceAddress}}' href=''>{{{disaRefType this.type this.referenceAddress}}}</a> {{/each}}</div>
+            </div>
+            <div class="disa-line-help" id="disa-line-help-{{hex address}}">
+			    <div class="disa-data">{{{info.spec}}}</div>
+                <div class="disa-data">{{info.description}}</div>
+            </div>
+		 </div>
+    	</div>
+	</script>
+	
+	
+	
+    <script id="disa-section" type="text/x-handlebars-template">    
+        <div class=" well disa-section {{sourceClass}}" id="disa-section-{{address}}" data-disa-address="{{address}}"" data-source-id="{{sourceId}}" data-disa-length="{{length}}">
+            <div class="col-lg-12 text-center">
+                <button type="button" class="iconButton disa-section-more-above" data-address`"{{address}}"><i class="glyphicon glyphicon-arrow-up"></i></button>            
+				<button type="button" class="close disa-close-section" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <table class="">
+            {{#each lines}}
+                <tr {{#if currentBreakpoint}} class="data-simulator-current-breakpoint"}}{{else}}{{#if simulatorNextInstruction}} class="disa-simulator-current-instruction" {{/if}}{{/if}}>
+                    <td class="breakpoint breakpoint-link" data-address="{{address}}">
+                        <div>{{#if breakpoint}}&bull;{{else}} {{/if}}</div>
+                    </td>
+                    <td class="disa-data" style="white-space: nowrap" ><a href='' class='disa-address' data-address="{{address}}" data-is-data="{{info.isData}}">{{hex address 6}}</a> <button class="iconButton disa-add-symbol-button"><i class="glyphicon glyphicon-comment"></i></button> {{hex word 4}}</td>
+                    <td class="disa-data" style="white-space: nowrap" >{{{info.text}}}</td>
+                    <td class="disa-data" style="white-space: nowrap" >
+                        {{#if info.target}}                                                        
+                            C&rarr;<a class='disa-link' title='{{hex info.target.data 6}}' data-address='{{info.target.address}}' href=''>({{hex info.target.address 6}})</a>
+                        {{/if}}
+                    </td>                    
+					<td><button data-line-help-id="disa-line-help-{{hex address}}" class="disa-line-help-button iconButton"><i class="glyphicon glyphicon-info-sign"></i></button></td>
+                    <td class="disa-data" style="white-space: nowrap" >{{{info.symbol}}} {{info.sideEffects}}</td>
+					
+                 </tr>
+				 <tr class="disa-line-help" id="disa-line-help-{{hex address}}">
+                    <td class="breakpoint"></div>
+					<td> </td>
+					<td class="disa-data" style="white-space: nowrap" >{{{info.spec}}}</td>
+                    <td colspan="5" class="disa-data" style="white-space: nowrap; " >{{info.description}}</td>
+				 </tr>
+				 <tr>
+                    <td class="breakpoint"></div>
+					<td> </td>
+					<td  class="disa-data" style="white-space: nowrap; max-width: 100px;" >{{#each info.}}<a class='disa-link' title='{{hex this.referenceData 6}}' data-address='{{hex this.referenceAddress 6}}' href=''>{{{disaRefType this.type
+					this.referenceAddress}}}</a> {{/each}}</td>
+				</tr>
+            {{/each}}     
+            </table>    
+            <div class="col-lg-12 text-center">            
+                <button class="iconButton disa-section-more-below" data-address="{{address}}"><i class="glyphicon glyphicon-arrow-down"></i></button>            
+            </div>
+        </div>    
+ 
+        
+    </script>
+    <script id="disa-symbol-list-template" type="text/x-handlebars-template">        
+        <div class="panel-group" id="accordion">            
+            {{#each categories}}
+            <div class="panel panel-default category-panel" id="disa-panel{{clean @key}}">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{clean @key}}">{{@key}}
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse{{clean @key}}" data-key="{{clean @key}}" class="disa-symbol-category panel-collapse collapse">
+                    <div class="panel-body">
+                        <ul class="list-unstyled">
+                            {{#each this}}
+                            <li class="disa-symbol-list-element"  data-name="{{this.name}}" data-lowercase-name="{{toLowerCase this.name}}"><a data-name="{{this.name}}" class="disa-symbol-link" data-type="{{this.type}}" href="">{{this.name}}</a></li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </script>
+    <script id="table-list-template" type="text/x-handlebars-template">        
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default category-panel" id="panelRomInformation">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseRomInformation">ROM Information
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseRomInformation" data-key="RomInformation" class="table-category panel-collapse collapse">
+                    <div class="panel-body">
+                        <ul class="list-unstyled">                            
+                            <li class="table-list-element" data-name="ROM Information" data-lowercase-name="rom information"><a id="rom-information-link" data-name="ROM Information" class="table-link" href="">ROM Information</a></li>                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {{#each categories}}
+            <div class="panel panel-default category-panel" id="panel{{clean @key}}">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{clean @key}}">{{@key}}
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse{{clean @key}}" data-key="{{clean @key}}" class="table-category panel-collapse collapse">
+                    <div class="panel-body">
+                        <ul class="list-unstyled">
+                            {{#each this}}
+                            <li class="table-list-element" data-name="{{this.name}}" data-lowercase-name="{{toLowerCase this.name}}"><a data-name="{{this.name}}" class="table-link" data-address="{{this.address}}" href="">{{this.name}} ({{this.type}})</a></li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </script>
+    <script id="table-scaling-def-template" type="text/x-handlebars-template">
+        <rom>
+            <scaling name="float" units="%" toexpr="x" frexpr="x" format="%.2f" min="0" max="105.00" inc=".1" storagetype="float" endian="big" />
+            <scaling name="uint8" units="%" toexpr="x" frexpr="x" format="%.2f" min="0" max="105.00" inc=".1" storagetype="uint8" endian="big" />
+            <scaling name="int8" units="%" toexpr="x" frexpr="x" format="%.2f" min="0" max="105.00" inc=".1" storagetype="uint8" endian="big" />
+            <scaling name="uint16" units="%" toexpr="x" frexpr="x" format="%.2f" min="0" max="105.00" inc=".1" storagetype="uint16" endian="big" />
+            <scaling name="int16" units="%" toexpr="x" frexpr="x" format="%.2f" min="0" max="105.00" inc=".1" storagetype="int16" endian="big" />
+            {{{content}}}
+        </rom>
+    </script>
+    <script id="3d-table-def-template" type="text/x-handlebars-template">
+        <table name="Undefined 3D table at {{hex address}} [{{hex z.address}}]" category="Undefined Tables" type="3D" level="4" scaling="{{z.scaling.name}}" address="{{hex z.address}}">
+            <table name="X Axis" type="X Axis" elements="{{x.size}}" scaling="{{x.scaling.name}}" address="{{hex x.address}}" />
+            <table name="Y Axis" type="Y Axis" elements="{{y.size}}" scaling="{{x.scaling.name}}" address="{{hex y.address}}" />            
+        </table>
+    </script>
+    
+    <script id="2d-table-def-template" type="text/x-handlebars-template">
+        <table name="Undefined 2D table at {{hex address}} [{{hex z.address}}]" category="Undefined Tables" type="2D" level="4" scaling="{{z.scaling.name}}" address="{{hex z.address}}">
+            <table name="X Axis" type="X Axis" elements="{{x.size}}" scaling="{{x.scaling.name}}" address="{{hex x.address}}" />
+        </table>
+    </script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            function processResize() {
+                var x = $(".full-height");
+                x.height($(window).height()-x.offset().top);
+            }
+            $(window).on("resize", processResize);
+            $(".full-height").bind('DOMNodeInserted', function(e) {
+                processResize();
+            });
+        });
+    </script>
 </body>
 </html>

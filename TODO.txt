@@ -1,0 +1,38 @@
+100% height class
+
+=== Map Features ===
+Edit 2d Axis Scales
+
+=== Disa ===
+Make sure current PC is visible after step or breakpoint 
+
+Don't nuke user symbols on Analyse
+Add symbols (subroutines and variables)
+Fix reference display
+Check calculated references
+Add byte/long display
+Auto set data of tables
+Generate references button
+Save Disa model
+Analyse missing symbols bug
+Fix sourceClass/sourceId (search for them) mess
+
+=== File system ===
+Save fails - no error shown
+Global Filesystem (if possible)
+
+=== Machine ===
+Fix up global objects and functions
+Reset after settings change
+Jquery deferred
+
+=== Options ===
+Make options rom specific
+
+=== Maf Scaler ===
+Put the rest of the column guessers in
+Apply to logs (MRP) seems to ignore thresholds
+
+
+=== Definitions ===
+gdrive definition load
