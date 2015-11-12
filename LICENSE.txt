@@ -23,4 +23,4 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PLEASE NOTE:
 
-Files under the /external, /bootstrap and fonts folders are licensed by their respective owners. Please see individual files and folders for details.
+Files under the /external, /bootstrap and /fonts folders are licensed by their respective owners. Please see individual files and folders for details.
