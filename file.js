@@ -3,14 +3,17 @@
  */
 
 function FileSystem() {
+    console.log("FileSystem")
     var _this = this;
     var deferred = new $.Deferred();
 
     var _this = this;
     this.filer = new Filer();
     this.filer.init({ persistent: false, size: 1024 * 1024 }, function () {
+        console.log("FileSystem -> this.filer.init : success");
         deferred.resolveWith(_this);
     }, function() {
+        console.log("FileSystem -> this.filer.init : fail");
         console.log("FileSystem failed to initialise");
         deferred.rejectWith(_this);
     });
