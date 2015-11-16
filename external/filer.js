@@ -711,7 +711,6 @@ var Filer = new function() {
   Filer.prototype.rm = function(entryOrPath, successCallback,
                                 opt_errorHandler) {
     if (!fs_) {
-     debugger;
       throw new Error(FS_INIT_ERROR_MSG);
     }
 
