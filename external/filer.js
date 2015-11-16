@@ -466,7 +466,6 @@ var Filer = new function() {
    */
   Filer.prototype.init = function(opt_initObj, opt_successCallback,
                                   opt_errorHandler) {
-    console.log("Filer.prototype.init")
     if (!self.requestFileSystem) {
       throw new MyFileError({
         code: FileError.BROWSER_NOT_SUPPORTED,
@@ -488,7 +487,6 @@ var Filer = new function() {
       cwd_ = fs_.root;
       isOpen_ = true;
 
-      console.log("Filer.prototype.init -> opt_successCallback")
       opt_successCallback && opt_successCallback(fs);
     };
 
