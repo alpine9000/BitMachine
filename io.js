@@ -1578,12 +1578,14 @@ function ResetMalloc() {
 
 function MallocAdddress(address, bitLength) {
     if (bitLength === undefined) {
-        if (_.filter(io.malloc.alloc, function(a) {
+        var current = _.filter(io.malloc.alloc, function(a) {
             return a.address == address; 
-        }).length == 0) {
+        });
+        if (current.length == 0) {
             io.malloc.alloc.push({address: address, pid: io.malloc.pid, size: io.malloc.size});
         } else {
             console.log("[%c" + ToHex(simulator.address) + "%c] Duplicate Address - MallocAdddress(" + io.malloc.size + ")" + " = " + ToHex(address), 'color: blue', 'color: black');
+            console.log(current);
         }
         //console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address), 'color: blue', 'color: black');
     } else {
