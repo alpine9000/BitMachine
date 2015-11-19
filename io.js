@@ -1022,7 +1022,7 @@ function FileFlags(data) {
             } else {
                 //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] success",  'color: blue', 'color: black');
                 if (io.file.files[fd] === undefined) {
-                    debugger;
+                    deferred.reject();
                 }
                 io.file.files[fd].data = fileData;
                 io.file.files[fd].dataView = new DataView(io.file.files[fd].data);
@@ -1038,7 +1038,7 @@ function FileFlags(data) {
     } else if ((data & 0xFF) === 1 ) { // O_WRONLY
         if (data & 0x200) { //O_CREAT
             if (io.file.files[io.file.fd] === undefined) {
-                    debugger;
+                deferred.reject();
             }
             io.file.files[io.file.fd].data = new ArrayBuffer(0);
             io.file.files[io.file.fd].dataView = new DataView(io.file.files[io.file.fd].data);
@@ -1054,7 +1054,7 @@ function FileFlags(data) {
     } else if ((data&0xFF) === 2) { //O_RDWR
         if (data & 0x200) { //O_CREAT
             if (io.file.files[io.file.fd] === undefined) {
-                debugger;
+                deferred.reject();
             }
             io.file.files[io.file.fd].data = new ArrayBuffer(0);
             io.file.files[io.file.fd].dataView = new DataView(io.file.files[io.file.fd].data);
@@ -1071,7 +1071,7 @@ function FileFlags(data) {
                 } else {
                     //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] success",  'color: blue', 'color: black');
                     if (io.file.files[fd] === undefined) {
-                       debugger;
+                       deferred.reject();
                     }
                     io.file.files[fd].data = fileData;
                     io.file.files[fd].dataView = new DataView(io.file.files[fd].data);
@@ -1583,11 +1583,14 @@ function MallocAdddress(address, bitLength) {
         });
         if (current.length == 0) {
             io.malloc.alloc.push({address: address, pid: io.malloc.pid, size: io.malloc.size});
+            if (typeof(debugMalloc) !== "undefined") {
+                console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
+            }
         } else {
             console.log("[%c" + ToHex(simulator.address) + "%c] Duplicate Address - MallocAdddress(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
             console.log(current);
         }
-        //console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address), 'color: blue', 'color: black');
+        
     } else {
         if (io.malloc.readIndex !== undefined) {
             var alloc = io.malloc.readAllocs[io.malloc.readIndex++];
@@ -1626,11 +1629,11 @@ function MallocFreeAddress(address) {
         });
         
         if (newalloc.length == io.malloc.alloc.length) {
-           // console.log("[%c" + ToHex(simulator.address) + "%c] MallocFree(" + address + ") : Free unknown", 'color: blue', 'color: black');
+            console.log("[%c" + ToHex(simulator.address) + "%c] MallocFree(" + address + ") : Free unknown", 'color: blue', 'color: black');
         }
         
         io.malloc.alloc = newalloc;
-        //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreeAddress(" + ToHex(address) + ")", 'color: blue', 'color: black');
+        console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreeAddress(" + ToHex(address) + ")", 'color: blue', 'color: black');
     }
 }
 
@@ -1639,10 +1642,10 @@ function MallocFreePid(pid) {
        return a.pid != pid; 
     });
     if (newalloc.length != io.malloc.alloc.length) {
-        console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePide(" + pid + ") : Found zombie " + newalloc.length + " - " +  io.malloc.alloc.length, 'color: blue', 'color: black');
+        console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ") : Found zombie " + newalloc.length + " - " +  io.malloc.alloc.length, 'color: blue', 'color: black');
     }
     io.malloc.alloc = newalloc;
-    //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ")", 'color: blue', 'color: black');
+    console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ")", 'color: blue', 'color: black');
 }
 
 
