@@ -1586,9 +1586,10 @@ function MallocAdddress(address, bitLength) {
             //console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
         } else {
             console.log("[%c" + ToHex(simulator.address) + "%c] Duplicate Address - MallocAdddress(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
-            console.log(current);
-            simulator.stop = true;
-            alert("Duplicate Address")
+            //console.log(current);
+            //simulator.stop = true;
+            //alert("Duplicate Address")
+            MallocFreeAddress(address);
         }
         
     } else {
