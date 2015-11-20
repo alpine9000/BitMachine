@@ -1626,9 +1626,9 @@ function MallocFreeAddress(address) {
            return a.address != address; 
         });
         
-        if (newalloc.length == io.malloc.alloc.length) {
-            console.log("[%c" + ToHex(simulator.address) + "%c] MallocFree(" + address + ") : Free unknown", 'color: blue', 'color: black');
-        }
+        //if (newalloc.length == io.malloc.alloc.length) {
+           // console.log("[%c" + ToHex(simulator.address) + "%c] MallocFree(" + address + ") : Free unknown", 'color: blue', 'color: black');
+        //}
         
         io.malloc.alloc = newalloc;
         //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreeAddress(" + ToHex(address) + ")", 'color: blue', 'color: black');
