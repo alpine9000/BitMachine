@@ -1616,6 +1616,7 @@ function MallocList(pid, bitLength) {
    io.malloc.readAllocs = _.filter(io.malloc.alloc, function(a) {
        return a.pid == pid; 
    });
+   MallocFreePid(pid);
 }
     
 function MallocSize(size) {
