@@ -1583,7 +1583,7 @@ function MallocAdddress(address, bitLength) {
         });
         if (current.length == 0) {
             io.malloc.alloc.push({address: address, pid: io.malloc.pid, size: io.malloc.size});
-            console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
+            //console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
         } else {
             console.log("[%c" + ToHex(simulator.address) + "%c] Duplicate Address - MallocAdddress(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
             console.log(current);
