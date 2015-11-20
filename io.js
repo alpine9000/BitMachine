@@ -1583,9 +1583,7 @@ function MallocAdddress(address, bitLength) {
         });
         if (current.length == 0) {
             io.malloc.alloc.push({address: address, pid: io.malloc.pid, size: io.malloc.size});
-            if (typeof(debugMalloc) !== "undefined") {
-                console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
-            }
+            //console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
         } else {
             console.log("[%c" + ToHex(simulator.address) + "%c] Duplicate Address - MallocAdddress(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
             console.log(current);
@@ -1633,7 +1631,7 @@ function MallocFreeAddress(address) {
         }
         
         io.malloc.alloc = newalloc;
-        console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreeAddress(" + ToHex(address) + ")", 'color: blue', 'color: black');
+        //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreeAddress(" + ToHex(address) + ")", 'color: blue', 'color: black');
     }
 }
 
@@ -1645,7 +1643,7 @@ function MallocFreePid(pid) {
         console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ") : Found zombie " + newalloc.length + " - " +  io.malloc.alloc.length, 'color: blue', 'color: black');
     }
     io.malloc.alloc = newalloc;
-    console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ")", 'color: blue', 'color: black');
+    //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ")", 'color: blue', 'color: black');
 }
 
 
