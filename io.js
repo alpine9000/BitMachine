@@ -1645,7 +1645,7 @@ function MallocFreePid(pid) {
        return a.pid != pid; 
     });
     if (newalloc.length != io.malloc.alloc.length) {
-        console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ") : Found zombie " + newalloc.length + " - " +  io.malloc.alloc.length, 'color: blue', 'color: black');
+        //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ") : Found zombie " + newalloc.length + " - " +  io.malloc.alloc.length, 'color: blue', 'color: black');
     }
     io.malloc.alloc = newalloc;
     //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ")", 'color: blue', 'color: black');
