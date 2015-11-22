@@ -1578,10 +1578,12 @@ function ResetMalloc() {
 
 function MallocAdddress(address, bitLength) {
     if (bitLength === undefined) {
-        var current = _.find(io.malloc.alloc, function(a) {
-            return a.address == address; 
+        var current = _.filter(io.malloc.alloc, function(a) {
+        //var current = _.find(io.malloc.alloc, function(a) {
+             return a.address == address; 
         });
-        if (current === undefined) {
+        if (current.length == 0) {
+        //if (current === undefined) {
             io.malloc.alloc.push({address: address, pid: io.malloc.pid, size: io.malloc.size});
             //console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
         } else {
