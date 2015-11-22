@@ -416,7 +416,7 @@ simulator.FastStep = function() {
     s.instructionProcessors[s.instruction.instruction.instructionIndex](s.instruction);
 
     if (s.branchAfter !== undefined) {
-        simulator.address = s.branchAfter;
+        simulator.address = s.branchAfter >>> 0;
         s.delayedBranch = s.branchAfter = undefined;
     } else if (s.address == initialAddress) { // Haven't imm branched
         s.address+=2;
