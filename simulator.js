@@ -206,7 +206,7 @@ simulator.SlowMode = function() {
     cpu.Write32 = cpu.SlowWrite32;
     cpu.Write16 = cpu.SlowWrite16;
     cpu.Write8 = cpu.SlowWrite8;
-    simulator.Step = simulator.FastStep;
+    simulator.Step = simulator.SlowStep;
 };
 
 simulator.FastMode = function() {
@@ -216,7 +216,7 @@ simulator.FastMode = function() {
     cpu.Write32 = cpu.FastWrite32;
     cpu.Write16 = cpu.FastWrite16;
     cpu.Write8 = cpu.FastWrite8;
-    simulator.Step = simulator.SlowStep;
+    simulator.Step = simulator.FastStep;
 };
 
 simulator.Reset = function() {
