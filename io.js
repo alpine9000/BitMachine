@@ -1496,6 +1496,7 @@ function UnlinkPath(data)
     var index = io.unlink.unlinks.length-1;
     var unlink = io.unlink.unlinks[index];
     unlink.path = filename;
+    unlink.status = 1;
     
     //console.log("[%c" + ToHex(simulator.address) + "%c] Rename - " + rename.oldFilename + " -> " + rename.newFilename, 'color: blue', 'color: black');
     
