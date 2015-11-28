@@ -107,15 +107,15 @@ FileSystem.prototype.rm = function (path) {
     
     console.log("FileSystem.rm: " + path);
     
-    this.filer.open(path, function() {
+    //this.filer.open(path, function() {
         _this.filer.rm(path, function() {
             deferred.resolve();
         }, function() {
             deferred.reject();
         });
-    }, function() {
-        deferred.reject();
-    });
+    //}, function() {
+     //   deferred.reject();
+//    });
         
     return deferred.promise();
 };
