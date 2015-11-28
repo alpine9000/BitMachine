@@ -1343,6 +1343,7 @@ function ElfKernelLoad(fd) {
         mapEdit.LoadMap(file.filename, elf.image).done(function() {
             GetDisa().done(function() {
                     var disa = this;
+                    disa.elf = elf;
                     function _done() {
                         for (var i = 0; i < elf.symbols.length; i++) {
                             if (elf.symbols[i].st_info != 4) {
