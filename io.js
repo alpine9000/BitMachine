@@ -36,6 +36,46 @@ var io = {
     
 };
 
+function ReadRamString(address)
+{
+    var data = "", c;
+    
+    for (; c !== 0; address++) {
+        c = cpu.Read8(address);
+        if (c !== 0) {
+            data += String.fromCharCode(c);
+        }
+    }
+    return data;
+}
+
+function GetElfSymbol(name)
+{
+    return _.find(simulator.disa.elf.symbols, function(x) { return x.name == name;})
+}
+
+function GetThreadTable()
+{
+    return cpu.threadTable = GetElfSymbol("_threadTable");;
+}
+
+function PrintThreadTableEntry(pid)
+{
+    var threadTable = GetThreadTable();
+    
+    function Read(index, offset) {
+        cpu.ReadRam32((index*threadTable.st_size)+threadTable.st_value+offset)
+    }
+    
+    for (var index = 0; i < 5; i++) {
+        var _pid = Read(i, 0);
+        if (_pid == pid) {
+            console.log("pid: " + pid);
+            break;
+        }
+    }
+}
+
 function FileSystemRead(fd, filename)
 {
     var deferred = new $.Deferred();
