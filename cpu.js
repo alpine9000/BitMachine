@@ -828,16 +828,18 @@ cpu.SetSR = function(v) {
     v = v >>> 0;
     //AssertDataValid(v);
     
-    if (cpu.currentThreadAddress != undefined) {
-        io.currentThread = cpu.ReadRam32(cpu.currentThreadAddress);
-    }
-    if (io.currentThread != undefined && ((simulator.registers.sr & 0xF0) != 0xF0) && ((v & 0xF0) == 0xF0)) { // Disable interrupts
-        cpu.interruptDisabler = io.currentThread;
-    } 
-    
-    if (io.currentThread != undefined && ((simulator.registers.sr & 0xF0) == 0xF0) && ((v & 0xF0) != 0xF0)) { // Enable interrupts
-        if (cpu.interruptDisabler != io.currentThread) {
-            console.log("cpu.SetSR: cpu.interruptDisabler("+ cpu.interruptDisabler + ") != io.currentThread(" + io.currentThread + ")" );
+    if (0) {
+        if (cpu.currentThreadAddress != undefined) {
+            io.currentThread = cpu.ReadRam32(cpu.currentThreadAddress);
+        }
+        if (io.currentThread != undefined && ((simulator.registers.sr & 0xF0) != 0xF0) && ((v & 0xF0) == 0xF0)) { // Disable interrupts
+            cpu.interruptDisabler = io.currentThread;
+        } 
+        
+        if (io.currentThread != undefined && ((simulator.registers.sr & 0xF0) == 0xF0) && ((v & 0xF0) != 0xF0)) { // Enable interrupts
+            if (cpu.interruptDisabler != io.currentThread) {
+                console.log("cpu.SetSR: cpu.interruptDisabler("+ cpu.interruptDisabler + ") != io.currentThread(" + io.currentThread + ")" );
+            }
         }
     }
     simulator.registers.sr = v & 0x3F3;
