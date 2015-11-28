@@ -828,6 +828,9 @@ cpu.SetSR = function(v) {
     v = v >>> 0;
     //AssertDataValid(v);
     
+    if (cpu.currentThreadAddress != undefined) {
+        io.currentThread = cpu.ReadRam32(cpu.currentThreadAddress);
+    }
     if (io.currentThread != undefined && ((simulator.registers.sr & 0xF0) != 0xF0) && ((v & 0xF0) == 0xF0)) { // Disable interrupts
         cpu.interruptDisabler = io.currentThread;
     } 
