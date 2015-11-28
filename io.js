@@ -1347,6 +1347,9 @@ function ElfKernelLoad(fd) {
                         for (var i = 0; i < elf.symbols.length; i++) {
                             if (elf.symbols[i].st_info != 4) {
                                 disa.AddSymbol(elf.symbols[i].st_value, elf.symbols[i].name, "Program Symbol");
+                                if (elf.symbols[i].name == "_currentThread") {
+                                    cpu.currentThreadAddress = elf.symbols[i].st_value;
+                                }
                             }
                         }
                         GetDisaView().done(function() { this.RenderTableList();})
