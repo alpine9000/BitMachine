@@ -727,13 +727,15 @@ function KernelPrint(data)
 
 function KernelTrace(data)
 {
-    if (data & 0x100) {
+    /*if (data & 0x100) {
         io.ktrace.push({action: "BLOCKED", id: data & 0xFF, time: window.performance.now()});
     } else if (data & 0x1000) {
         io.ktrace.push({action: "NOWAIT", time: window.performance.now()});
     } else {
         io.ktrace.push({action: "SWITCH", id: data & 0xFF, time: window.performance.now()});
-    }
+    }*/
+    
+    io.currentThread = data;
 }
 
 function ConsoleColor(data) {
