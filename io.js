@@ -1667,6 +1667,19 @@ function ResetMalloc() {
     io.malloc = { size: undefined, alloc: []};
 }
 
+function PIDOwnsRam(pid, address)
+{
+    var rams = _.filter(io.malloc.alloc, function(a) {
+             return a.pid == pid; 
+        });
+        
+    var owned = _.find(rams, function(a) {
+       return address >= a.address && address < a.address+a.size;
+    });
+    
+    return owned != undefined;
+}
+
 function MallocAdddress(address, bitLength) {
     if (bitLength === undefined) {
         //var current = _.filter(io.malloc.alloc, function(a) {
