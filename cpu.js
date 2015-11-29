@@ -148,18 +148,12 @@ cpu.ReadRam32 = function(address) {
 
 cpu.CheckReadRam32 = function(address) {
     
-    var currentThread;
-    if (cpu.currentThreadAddress === undefined) {
-        cpu.currentThreadAddress = GetElfSymbol("_currentThread").st_value;
-        
-    }
+    var currentPid = CurrentPid();
     
-    currentThread = simulator.ram[(cpu.currentThreadAddress - cpu.ramStart) >>> 2]
-    
-    if (currentThread != 0 && currentThread != 1) {
-        var pid = PIDOwnsRam(currentThread, address);
-        if (pid != 0 && pid != undefined && pid != currentThread) {
-            console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentThread:" + currentThread + " -> address:" + ToHex(address) + " owner: " + pid, 'color: blue', 'color: black');
+    if (currentPid != 1) {
+        var pid = PIDOwnsRam(currentPid, address);
+        if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid) {
+            console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid, 'color: blue', 'color: black');
         }
     }
     
