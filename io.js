@@ -89,18 +89,24 @@ function PrintThreadTable()
     var threadMax = 5;
     var threadTable = GetThreadTable();
    
+   function Address(index, offset) {
+       return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
+   }
    function Read(index, offset) {
-        return cpu.ReadRam32((index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4))
+        return cpu.ReadRam32(Address(index, offset));
     }
    
    for (var i = 0; i < threadMax; i++) {
         var _pid = Read(i, 0);
-        var argv = [];
-        for (var c = 0; cpu.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
-            argv.push(ReadRamString(cpu.ReadRam32(Read(i, 7)+(c*4))));
+        var argv = [], cwd = "";
+        if (Read(i, 6) > 0) {
+            for (var c = 0; cpu.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
+                argv.push(ReadRamString(cpu.ReadRam32(Read(i, 7)+(c*4))));
+            }
+            
+            cwd = ReadRamString(Address(i, 12));
         }
-        //var cwd = ReadRamString(Read(i, 12));
-        var cwd = "";
+    
         table.push({pid: _pid, argv: argv.join(" "), cwd: cwd});
     }
 
