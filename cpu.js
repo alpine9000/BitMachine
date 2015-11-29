@@ -158,7 +158,7 @@ cpu.CheckReadRam32 = function(address) {
     
     if (currentThread != 0) {
         var pid = PIDOwnsRam(currentThread, address);
-        if (pid != currentThread) {
+        if (pid != 0 && pid != undefined && pid != currentThread) {
             console.log("Bad read: currentThread:" + currentThread + " -> address:" + ToHex(address) + " owner: " + pid);
         }
     }
