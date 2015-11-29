@@ -146,6 +146,23 @@ cpu.ReadRam32 = function(address) {
     return simulator.ram[(address - cpu.ramStart) >>> 2];
 };
 
+cpu.CheckReadRam32 = function(address) {
+    
+    var currentThread;
+    if (cpu.currentThreadAddress === undefined) {
+        cpu.currentThreadAddress = GetElfSymbol("_currentThread").st_value;
+        
+    }
+    
+    currentThread = simulator.ram[(cpu.currentThreadAddress - cpu.ramStart) >>> 2]
+    
+    if (currentThread != 0 && !PIDOwnsRam(currentThread, address)) {
+        console.log("Bad read: " + currentThread + " -> " + ToHex(address));
+    }
+    
+    return simulator.ram[(address - cpu.ramStart) >>> 2];
+};
+
 
 cpu.ReadRam16 = function(address, bitLength) {
     //var alignedAddress = (((address >>> 0) >>> 2) << 2) >>> 0;
