@@ -107,8 +107,11 @@ function PrintThreadTable()
    
    for (var i = 0; i < threadMax; i++) {
         var _pid = Read(i, 0);
+        var state = Read(i, 1);
+        var image = Read(i, 5);
+        var imageSize = Read(i, 8);
         var argv = [], cwd = "";
-        if (Read(i, 6) > 0) {
+        if (state != 0 && Read(i, 6) > 0) {
             for (var c = 0; cpu.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
                 argv.push(ReadRamString(cpu.ReadRam32(Read(i, 7)+(c*4))));
             }
@@ -116,7 +119,7 @@ function PrintThreadTable()
             cwd = ReadRamString(Address(i, 12));
         }
     
-        table.push({pid: _pid, argv: argv.join(" "), cwd: cwd});
+        table.push({pid: _pid, state: state, image: ToHex(image), imageEnd: ToHex(image+imageSize), argv: argv.join(" "), cwd: cwd});
     }
 
     console.table(table);
