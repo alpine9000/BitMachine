@@ -1669,15 +1669,15 @@ function ResetMalloc() {
 
 function PIDOwnsRam(pid, address)
 {
-    var rams = _.filter(io.malloc.alloc, function(a) {
-             return a.pid == pid; 
-        });
-        
-    var owned = _.find(rams, function(a) {
+    var owned = _.find(io.malloc.alloc, function(a) {
        return address >= a.address && address < a.address+a.size;
     });
     
-    return owned != undefined;
+    if (owned != undefined) {
+        return owned.pid;
+    }
+    
+    return undefined;
 }
 
 function MallocAdddress(address, bitLength) {
