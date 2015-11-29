@@ -88,6 +88,33 @@ function PrintThreadTableEntry(pid)
     }
 }
 
+function CurrentPid()
+{
+    var currentThread;
+    if (cpu.currentThreadAddress === undefined) {
+        cpu.currentThreadAddress = GetElfSymbol("_currentThread").st_value;
+        
+    }
+    
+    currentThread = simulator.ram[(cpu.currentThreadAddress - cpu.ramStart) >>> 2]
+    
+    var threadMax = 5;
+    var threadTable = GetThreadTable();
+    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
+    if (threadMaxSymbol !== undefined) {
+        threadMax = simulator.ram[(threadMaxSymbol.st_value - cpu.ramStart) >>> 2]
+    }
+    
+    function Address(index, offset) {
+       return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
+   }
+   function Read(index, offset) {
+         return simulator.ram[(Address(index, offset) - cpu.ramStart) >>> 2]
+   }
+
+    return Read(currentThread, 0);
+}
+
 function PrintThreadTable()
 {
     var table = [];
