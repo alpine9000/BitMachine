@@ -40,7 +40,7 @@ function ReadRamString(address)
 {
     var data = "", c;
     
-    for (; c !== 0; address++) {
+    for (; c !== 0 && (c-address) < 1024; address++) {
         c = cpu.Read8(address);
         if (c !== 0) {
             data += String.fromCharCode(c);
@@ -80,6 +80,30 @@ function PrintThreadTableEntry(pid)
             break;
         }
     }
+}
+
+function PrintThreadTable()
+{
+    var table = [];
+    var threadMax = 5;
+    var threadTable = GetThreadTable();
+   
+   function Read(index, offset) {
+        return cpu.ReadRam32((index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4))
+    }
+   
+   for (var i = 0; i < threadMax; i++) {
+        var _pid = Read(i, 0);
+        var argv = [];
+        for (var c = 0; cpu.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
+            argv.push(ReadRamString(cpu.ReadRam32(Read(i, 7)+(c*4))));
+        }
+        //var cwd = ReadRamString(Read(i, 12));
+        var cwd = "";
+        table.push({pid: _pid, argv: argv.join(" "), cwd: cwd});
+    }
+
+    console.table(table);
 }
 
 function FileSystemRead(fd, filename)
