@@ -61,16 +61,22 @@ function GetThreadTable()
 
 function PrintThreadTableEntry(pid)
 {
+    var threadMax = 5;
     var threadTable = GetThreadTable();
     
     function Read(index, offset) {
-        cpu.ReadRam32((index*threadTable.st_size)+threadTable.st_value+offset)
+        return cpu.ReadRam32((index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4))
     }
     
-    for (var index = 0; i < 5; i++) {
+    for (var i = 0; i < threadMax; i++) {
         var _pid = Read(i, 0);
         if (_pid == pid) {
             console.log("pid: " + pid);
+            var argv = [];
+            for (var c = 0; cpu.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
+                argv.push(ReadRamString(cpu.ReadRam32(Read(i, 7)+(c*4))));
+            }
+            console.log("argv: " + argv.join(" "));
             break;
         }
     }
