@@ -63,6 +63,11 @@ function GetThreadTable()
 function PrintThreadTableEntry(pid)
 {
     var threadMax = 5;
+    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
+    if (threadMaxSymbol !== undefined) {
+        threadMax = cpu.ReadRam32(threadMaxSymbol.st_value);
+    }
+    
     var threadTable = GetThreadTable();
     
     function Read(index, offset) {
@@ -88,6 +93,10 @@ function PrintThreadTable()
     var table = [];
     var threadMax = 5;
     var threadTable = GetThreadTable();
+    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
+    if (threadMaxSymbol !== undefined) {
+        threadMax = cpu.ReadRam32(threadMaxSymbol.st_value);
+    }
    
    function Address(index, offset) {
        return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
