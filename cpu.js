@@ -156,8 +156,11 @@ cpu.CheckReadRam32 = function(address) {
     
     currentThread = simulator.ram[(cpu.currentThreadAddress - cpu.ramStart) >>> 2]
     
-    if (currentThread != 0 && !PIDOwnsRam(currentThread, address)) {
-        console.log("Bad read: " + currentThread + " -> " + ToHex(address));
+    if (currentThread != 0) {
+        var pid = PIDOwnsRam(currentThread, address);
+        if (pid != currentThread) {
+            console.log("Bad read: currentThread:" + currentThread + " -> address:" + ToHex(address) + " owner: " + pid);
+        }
     }
     
     return simulator.ram[(address - cpu.ramStart) >>> 2];
