@@ -38,9 +38,10 @@ var io = {
 
 function ReadRamString(address)
 {
+    var baseAddress = address;
     var data = "", c;
     
-    for (; c !== 0 && (c-address) < 1024; address++) {
+    for (; c !== 0 && (address-baseAddress) < 1024; address++) {
         c = cpu.Read8(address);
         if (c !== 0) {
             data += String.fromCharCode(c);
