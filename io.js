@@ -773,15 +773,13 @@ function KernelPrint(data)
 
 function KernelTrace(data)
 {
-    /*if (data & 0x100) {
+    if (data & 0x100) {
         io.ktrace.push({action: "BLOCKED", id: data & 0xFF, time: window.performance.now()});
     } else if (data & 0x1000) {
         io.ktrace.push({action: "NOWAIT", time: window.performance.now()});
     } else {
         io.ktrace.push({action: "SWITCH", id: data & 0xFF, time: window.performance.now()});
-    }*/
-    
-    io.currentThread = data;
+    }
 }
 
 function ConsoleColor(data) {
@@ -1394,9 +1392,6 @@ function ElfKernelLoad(fd) {
                         for (var i = 0; i < elf.symbols.length; i++) {
                             if (elf.symbols[i].st_info != 4) {
                                 disa.AddSymbol(elf.symbols[i].st_value, elf.symbols[i].name, "Program Symbol");
-                                if (elf.symbols[i].name == "_currentThread") {
-                                    cpu.currentThreadAddress = elf.symbols[i].st_value;
-                                }
                             }
                         }
                         GetDisaView().done(function() { this.RenderTableList();})
