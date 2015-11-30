@@ -74,6 +74,10 @@ var kernel = {
                     var data = cpu.ReadRam8(a);
                     while (data != 0) {
                         data = cpu.ReadRam8(++a);
+                        if (a-start > 1024) {
+                            console.log("kernel.IsArgvAddress: bailing out");
+                            return false;
+                        }
                     }
                     var end = a;
                     if (address >= start && address < end) {
