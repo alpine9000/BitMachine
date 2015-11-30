@@ -42,7 +42,7 @@ var kernel = {
 
     CurrentPid : function()
     {
-        return kernel.Read32(simulator.ram[(this.currentThreadAddress - cpu.ramStart) >>> 2]);
+        return kernel.ReadRam32(simulator.ram[(this.currentThreadAddress - cpu.ramStart) >>> 2]);
     },
     
     IsImageAddress: function(pid, address)
