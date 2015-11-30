@@ -152,7 +152,7 @@ cpu.CheckReadRam32 = function(address) {
     
     if (currentPid != 1) {
         var pid = PIDOwnsRam(currentPid, address);
-        if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid) {
+        if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !IsImageAddress(currentPid, address)) {
             console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid, 'color: blue', 'color: black');
         }
     }
