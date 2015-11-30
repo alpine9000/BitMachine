@@ -64,7 +64,8 @@ var kernel = {
     IsArgvAddress: function(pid, address)
     {
         for (var i = 0; i < kernel.threadMax; i++) {
-            if (kernel.Read(i, 0) == pid) {
+            var state = kernel.Read(i, 1) ;
+            if (kernel.Read(i, 0) == pid && state != 0) {
                  var argv = [];
                 for (var c = 0; kernel.ReadRam32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
                     if (address == (kernel.Read(i, 7)+(c*4))) {
