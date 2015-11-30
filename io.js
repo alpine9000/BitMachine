@@ -1483,7 +1483,6 @@ function ElfKernelLoad(fd) {
                                 disa.AddSymbol(elf.symbols[i].st_value, elf.symbols[i].name, "Program Symbol");
                             }
                         }
-                        kernel.init()
                         GetDisaView().done(function() { this.RenderTableList();})
                         GetGui().Ready();
                         $("#disa-viewer-tab").click();
