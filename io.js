@@ -112,7 +112,7 @@ var kernel = {
                     argv.push(kernel.ReadRamString(kernel.ReadRam32(kernel.Read(i, 7)+(c*4))));
                 }
                 
-                cwd = kernel.ReadRamString(Address(i, 12));
+                cwd = kernel.ReadRamString(kernel.Address(i, 12));
             }
         
             table.push({pid: _pid, state: state, image: ToHex(image), imageEnd: ToHex(image+imageSize), argv: argv.join(" "), cwd: cwd});
