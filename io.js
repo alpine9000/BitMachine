@@ -2,8 +2,142 @@
  * Copyright © Enable Software Pty Ltd 2013 - All rights reserved
  */
 
+var kernel = {
+    init: function() {
+        this.threadMax = 5;
+        this.threadMaxSymbol = this.GetElfSymbol("_kernel_threadMax");
+        if (this.threadMaxSymbol !== undefined) {
+            this.threadMax = cpu.ReadRam32(this.threadMaxSymbol.st_value);
+        }
+        this.threadTable = GetThreadTable();
+        
+        this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
+    }, 
+    
+    ReadRam32: function(address) {
+         return simulator.ram[(address- cpu.ramStart) >>> 2]
+    },
+    
+    Read: function(index, offset) {
+        return kernel.ReadRam32((index*(kernel.threadTable.st_size/kernel.threadMax))+kernel.threadTable.st_value+(offset*4))
+    },
+    
+    Address: function(index, offset) {
+       return (index*(kernel.threadTable.st_size/kernel.threadMax))+kernel.threadTable.st_value+(offset*4);
+   },
+   
+   ReadRamString: function(address)
+    {
+        var baseAddress = address;
+        var data = "", c;
+        
+        for (; c !== 0 && (address-baseAddress) < 1024; address++) {
+            c = cpu.Read8(address);
+            if (c !== 0) {
+                data += String.fromCharCode(c);
+            }
+        }
+        return data;
+    },
+
+    CurrentPid : function()
+    {
+        return kernel.Read(simulator.ram[(this.currentThreadAddress - cpu.ramStart) >>> 2], 0);
+    },
+    
+    IsImageAddress: function(pid, address)
+    {
+        for (var i = 0; i < kernel.threadMax; i++) {
+            if (kernel.Read(i, 0) == pid) {
+                var image = kernel.Read(i, 5);
+                var imageSize = kernel.Read(i, 8);         
+                return address >= image && address < (image+imageSize);
+            }
+        }
+       
+       return false;
+    },
+
+
+    IsArgvAddress: function(pid, address)
+    {
+        for (var i = 0; i < kernel.threadMax; i++) {
+            if (kernel.Read(i, 0) == pid) {
+                 var argv = [];
+                for (var c = 0; kernel.RamRead32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
+                    if (address == (kernel.Read(i, 7)+(c*4))) {
+                        return true;
+                    }
+                    var a = start = kernel.RamRead32(Read(i, 7)+(c*4));
+                    var data = cpu.ReadRam8(a);
+                    while (data != 0) {
+                        data = cpu.ReadRam8(++a);
+                    }
+                    var end = a;
+                    if (address >= start && address < end) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            
+            }
+        }
+       
+       return false;
+    },
+    
+    GetElfSymbol: function(name)
+    {
+        return _.find(simulator.disa.elf.symbols, function(x) { return x.name == name;})
+    },
+
+    GetThreadTable: function ()
+    {
+        return cpu.threadTable = this.GetElfSymbol("_threadTable");;
+    },
+
+    PrintThreadTable: function ()
+    {
+        var table = [];
+     
+       for (var i = 0; i < kernel.threadMax; i++) {
+            var _pid = kernel.Read(i, 0);
+            var state = kernel.Read(i, 1);
+            var image = kernel.Read(i, 5);
+            var imageSize = kernel.Read(i, 8);
+            var argv = [], cwd = "";
+            if (state != 0 && kernel.Read(i, 6) > 0) {
+                for (var c = 0; kernel.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
+                    argv.push(kernel.ReadRamString(kernel.ReadRam32(Read(i, 7)+(c*4))));
+                }
+                
+                cwd = kernel.ReadRamString(Address(i, 12));
+            }
+        
+            table.push({pid: _pid, state: state, image: ToHex(image), imageEnd: ToHex(image+imageSize), argv: argv.join(" "), cwd: cwd});
+        }
+    
+        console.table(table);
+    },
+    
+    PIDOwnsRam: function (pid, address)
+    {
+        var owned = _.find(io.malloc.alloc, function(a) {
+           return address >= a.address && address < a.address+a.size;
+        });
+        
+        if (owned != undefined) {
+            return owned.pid;
+        }
+        
+        return undefined;
+    }
+
+
+}
+
 var io = {
-    deleteme: undefined,
     ktrace: undefined,
     consoleBuffer: [],
     consoleColors: [],
@@ -36,198 +170,6 @@ var io = {
     
 };
 
-function ReadRamString(address)
-{
-    var baseAddress = address;
-    var data = "", c;
-    
-    for (; c !== 0 && (address-baseAddress) < 1024; address++) {
-        c = cpu.Read8(address);
-        if (c !== 0) {
-            data += String.fromCharCode(c);
-        }
-    }
-    return data;
-}
-
-function GetElfSymbol(name)
-{
-    return _.find(simulator.disa.elf.symbols, function(x) { return x.name == name;})
-}
-
-function GetThreadTable()
-{
-    return cpu.threadTable = GetElfSymbol("_threadTable");;
-}
-
-function PrintThreadTableEntry(pid)
-{
-    var threadMax = 5;
-    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
-    if (threadMaxSymbol !== undefined) {
-        threadMax = cpu.ReadRam32(threadMaxSymbol.st_value);
-    }
-    
-    var threadTable = GetThreadTable();
-    
-    function Read(index, offset) {
-        return cpu.ReadRam32((index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4))
-    }
-    
-    for (var i = 0; i < threadMax; i++) {
-        var _pid = Read(i, 0);
-        if (_pid == pid) {
-            console.log("pid: " + pid);
-            var argv = [];
-            for (var c = 0; cpu.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
-                argv.push(ReadRamString(cpu.ReadRam32(Read(i, 7)+(c*4))));
-            }
-            console.log("argv: " + argv.join(" "));
-            break;
-        }
-    }
-}
-
-function IsImageAddress(pid, address)
-{
-    var threadMax = 5;
-    var threadTable = GetThreadTable();
-    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
-    if (threadMaxSymbol !== undefined) {
-        threadMax = simulator.ram[(threadMaxSymbol.st_value - cpu.ramStart) >>> 2]
-    }
-    
-    function Address(index, offset) {
-       return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
-   }
-   function Read(index, offset) {
-         return simulator.ram[(Address(index, offset) - cpu.ramStart) >>> 2]
-   }
-   
-
-    for (var i = 0; i < threadMax; i++) {
-        if (Read(i, 0) == pid) {
-            var image = Read(i, 5);
-            var imageSize = Read(i, 8);         
-            return address >= image && address < (image+imageSize);
-        }
-    }
-   
-   return false;
-}
-
-
-function IsArgvAddress(pid, address)
-{
-    var threadMax = 5;
-    var threadTable = GetThreadTable();
-    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
-    if (threadMaxSymbol !== undefined) {
-        threadMax = simulator.ram[(threadMaxSymbol.st_value - cpu.ramStart) >>> 2];
-    }
-    
-    function Address(index, offset) {
-       return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
-   }
-   function Read(index, offset) {
-         return simulator.ram[(Address(index, offset) - cpu.ramStart) >>> 2];
-   }
-   
-   function RamRead(address) {
-       return simulator.ram[(address - cpu.ramStart) >>> 2];
-   }
-   
-
-    for (var i = 0; i < threadMax; i++) {
-        if (Read(i, 0) == pid) {
-             var argv = [];
-            for (var c = 0; RamRead(Read(i, 7)+(c*4)) != 0; c++) {
-                if (address == (Read(i, 7)+(c*4))) {
-                    return true;
-                }
-                var a = start = RamRead(Read(i, 7)+(c*4));
-                var data = cpu.ReadRam8(a);
-                while (data != 0) {
-                    data = cpu.ReadRam8(++a);
-                }
-                var end = a;
-                if (address >= start && address < end) {
-                    return true;
-                }
-            }
-            
-            return false;
-            
-        }
-    }
-   
-   return false;
-}
-
-
-function CurrentPid()
-{
-    var currentThread;
-    if (cpu.currentThreadAddress === undefined) {
-        cpu.currentThreadAddress = GetElfSymbol("_currentThread").st_value;
-        
-    }
-    
-    currentThread = simulator.ram[(cpu.currentThreadAddress - cpu.ramStart) >>> 2]
-    
-    var threadMax = 5;
-    var threadTable = GetThreadTable();
-    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
-    if (threadMaxSymbol !== undefined) {
-        threadMax = simulator.ram[(threadMaxSymbol.st_value - cpu.ramStart) >>> 2]
-    }
-    
-    function Address(index, offset) {
-       return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
-   }
-   function Read(index, offset) {
-         return simulator.ram[(Address(index, offset) - cpu.ramStart) >>> 2]
-   }
-
-    return Read(currentThread, 0);
-}
-
-function PrintThreadTable()
-{
-    var table = [];
-    var threadMax = 5;
-    var threadTable = GetThreadTable();
-    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
-    if (threadMaxSymbol !== undefined) {
-        threadMax = cpu.ReadRam32(threadMaxSymbol.st_value);
-    }
-   
-   function Address(index, offset) {
-       return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
-   }
-   function Read(index, offset) {
-        return cpu.ReadRam32(Address(index, offset));
-    }
-   
-   for (var i = 0; i < threadMax; i++) {
-        var _pid = Read(i, 0);
-        var state = Read(i, 1);
-        var image = Read(i, 5);
-        var imageSize = Read(i, 8);
-        var argv = [], cwd = "";
-        if (state != 0 && Read(i, 6) > 0) {
-            for (var c = 0; cpu.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
-                argv.push(ReadRamString(cpu.ReadRam32(Read(i, 7)+(c*4))));
-            }
-            
-            cwd = ReadRamString(Address(i, 12));
-        }
-    
-        table.push({pid: _pid, state: state, image: ToHex(image), imageEnd: ToHex(image+imageSize), argv: argv.join(" "), cwd: cwd});
-    }
-
-    console.table(table);
-}
 
 function FileSystemRead(fd, filename)
 {
@@ -1541,6 +1483,7 @@ function ElfKernelLoad(fd) {
                                 disa.AddSymbol(elf.symbols[i].st_value, elf.symbols[i].name, "Program Symbol");
                             }
                         }
+                        kernel.init()
                         GetDisaView().done(function() { this.RenderTableList();})
                         GetGui().Ready();
                         $("#disa-viewer-tab").click();
@@ -1772,19 +1715,6 @@ function SetupVideoPeripheral(fb) {
 
 function ResetMalloc() {
     io.malloc = { size: undefined, alloc: []};
-}
-
-function PIDOwnsRam(pid, address)
-{
-    var owned = _.find(io.malloc.alloc, function(a) {
-       return address >= a.address && address < a.address+a.size;
-    });
-    
-    if (owned != undefined) {
-        return owned.pid;
-    }
-    
-    return undefined;
 }
 
 function MallocAdddress(address, bitLength) {
