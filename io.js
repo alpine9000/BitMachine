@@ -9,7 +9,7 @@ var kernel = {
         if (this.threadMaxSymbol !== undefined) {
             this.threadMax = cpu.ReadRam32(this.threadMaxSymbol.st_value);
         }
-        this.threadTable = GetThreadTable();
+        this.threadTable = this.GetThreadTable();
         
         this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
     }, 
