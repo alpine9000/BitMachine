@@ -3,6 +3,7 @@
  */
 
 var io = {
+    deleteme: undefined,
     ktrace: undefined,
     consoleBuffer: [],
     consoleColors: [],
