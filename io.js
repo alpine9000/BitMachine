@@ -44,7 +44,7 @@ var kernel = {
 
     CurrentPid : function()
     {
-        return kernel.ReadRam32(this.currentThreadAddress);
+        return kernel.Read(kernel.ReadRam32(this.currentThreadAddress), 0);
     },
     
     IsImageAddress: function(pid, address)
@@ -113,6 +113,7 @@ var kernel = {
             var state = kernel.Read(i, 1);
             var image = kernel.Read(i, 5);
             var imageSize = kernel.Read(i, 8);
+            var stack = kernel.Read(i, 4);
             var argv = [], cwd = "";
             if (state != 0 && kernel.Read(i, 6) > 0) {
                 for (var c = 0; kernel.ReadRam32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
@@ -122,7 +123,7 @@ var kernel = {
                 cwd = kernel.ReadRamString(kernel.Address(i, 12));
             }
         
-            table.push({pid: _pid, state: state, image: ToHex(image), imageEnd: ToHex(image+imageSize), argv: argv.join(" "), cwd: cwd});
+            table.push({pid: _pid, state: state, image: ToHex(image), imageEnd: ToHex(image+imageSize), stack: ToHex(stack), argv: argv.join(" "), cwd: cwd});
         }
     
         console.table(table);
