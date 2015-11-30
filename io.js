@@ -12,6 +12,8 @@ var kernel = {
         this.threadTable = this.GetThreadTable();
         
         this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
+        
+        cpu.ReadRam32 = cpu.CheckReadRam32
     }, 
     
     ReadRam32: function(address) {
@@ -64,11 +66,11 @@ var kernel = {
         for (var i = 0; i < kernel.threadMax; i++) {
             if (kernel.Read(i, 0) == pid) {
                  var argv = [];
-                for (var c = 0; kernel.RamRead32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
+                for (var c = 0; kernel.ReadRam32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
                     if (address == (kernel.Read(i, 7)+(c*4))) {
                         return true;
                     }
-                    var a = start = kernel.RamRead32(kernel.Read(i, 7)+(c*4));
+                    var a = start = kernel.ReadRam32(kernel.Read(i, 7)+(c*4));
                     var data = cpu.ReadRam8(a);
                     while (data != 0) {
                         data = cpu.ReadRam8(++a);
