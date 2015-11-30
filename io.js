@@ -142,10 +142,13 @@ function IsArgvAddress(pid, address)
         if (Read(i, 0) == pid) {
              var argv = [];
             for (var c = 0; RamRead(Read(i, 7)+(c*4)) != 0; c++) {
+                if (address == (Read(i, 7)+(c*4))) {
+                    return true;
+                }
                 var a = start = RamRead(Read(i, 7)+(c*4));
-                var data = RamRead(a);
+                var data = cpu.ReadRam8(a);
                 while (data != 0) {
-                    data = RamRead(++a);
+                    data = cpu.ReadRam8(++a);
                 }
                 var end = a;
                 if (address >= start && address < end) {
