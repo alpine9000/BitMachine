@@ -88,6 +88,35 @@ function PrintThreadTableEntry(pid)
     }
 }
 
+function IsImageAddress(pid, address)
+{
+    var threadMax = 5;
+    var threadTable = GetThreadTable();
+    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
+    if (threadMaxSymbol !== undefined) {
+        threadMax = simulator.ram[(threadMaxSymbol.st_value - cpu.ramStart) >>> 2]
+    }
+    
+    function Address(index, offset) {
+       return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
+   }
+   function Read(index, offset) {
+         return simulator.ram[(Address(index, offset) - cpu.ramStart) >>> 2]
+   }
+   
+   
+   
+    for (var i = 0; i < threadMax; i++) {
+        if (Read(i, 0) == pid) {
+            var image = Read(i, 5);
+            var imageSize = Read(i, 8);         
+            return address >= image && address < (image+imageSize);
+        }
+    }
+   
+   return false;
+}
+
 function CurrentPid()
 {
     var currentThread;
