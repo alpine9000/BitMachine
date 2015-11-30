@@ -68,7 +68,7 @@ var kernel = {
                     if (address == (kernel.Read(i, 7)+(c*4))) {
                         return true;
                     }
-                    var a = start = kernel.RamRead32(Read(i, 7)+(c*4));
+                    var a = start = kernel.RamRead32(kernel.Read(i, 7)+(c*4));
                     var data = cpu.ReadRam8(a);
                     while (data != 0) {
                         data = cpu.ReadRam8(++a);
@@ -108,8 +108,8 @@ var kernel = {
             var imageSize = kernel.Read(i, 8);
             var argv = [], cwd = "";
             if (state != 0 && kernel.Read(i, 6) > 0) {
-                for (var c = 0; kernel.ReadRam32(Read(i, 7)+(c*4)) != 0; c++) {
-                    argv.push(kernel.ReadRamString(kernel.ReadRam32(Read(i, 7)+(c*4))));
+                for (var c = 0; kernel.ReadRam32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
+                    argv.push(kernel.ReadRamString(kernel.ReadRam32(kernel.Read(i, 7)+(c*4))));
                 }
                 
                 cwd = kernel.ReadRamString(Address(i, 12));
