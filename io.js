@@ -103,8 +103,7 @@ function IsImageAddress(pid, address)
          return simulator.ram[(Address(index, offset) - cpu.ramStart) >>> 2]
    }
    
-   
-   
+
     for (var i = 0; i < threadMax; i++) {
         if (Read(i, 0) == pid) {
             var image = Read(i, 5);
@@ -115,6 +114,52 @@ function IsImageAddress(pid, address)
    
    return false;
 }
+
+
+function IsArgvAddress(pid, address)
+{
+    var threadMax = 5;
+    var threadTable = GetThreadTable();
+    var threadMaxSymbol = GetElfSymbol("_kernel_threadMax");
+    if (threadMaxSymbol !== undefined) {
+        threadMax = simulator.ram[(threadMaxSymbol.st_value - cpu.ramStart) >>> 2];
+    }
+    
+    function Address(index, offset) {
+       return (index*(threadTable.st_size/threadMax))+threadTable.st_value+(offset*4);
+   }
+   function Read(index, offset) {
+         return simulator.ram[(Address(index, offset) - cpu.ramStart) >>> 2];
+   }
+   
+   function RamRead(address) {
+       return simulator.ram[(address - cpu.ramStart) >>> 2];
+   }
+   
+
+    for (var i = 0; i < threadMax; i++) {
+        if (Read(i, 0) == pid) {
+             var argv = [];
+            for (var c = 0; RamRead(Read(i, 7)+(c*4)) != 0; c++) {
+                var a = start = RamRead(Read(i, 7)+(c*4));
+                var data = RamRead(a);
+                while (data != 0) {
+                    data = RamRead(++a);
+                }
+                var end = a;
+                if (address >= start && address < end) {
+                    return true;
+                }
+            }
+            
+            return false;
+            
+        }
+    }
+   
+   return false;
+}
+
 
 function CurrentPid()
 {
