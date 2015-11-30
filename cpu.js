@@ -148,11 +148,11 @@ cpu.ReadRam32 = function(address) {
 
 cpu.CheckReadRam32 = function(address) {
     
-    var currentPid = CurrentPid();
+    var currentPid = kernel.CurrentPid();
     
     if (currentPid != 1) {
-        var pid = PIDOwnsRam(currentPid, address);
-        if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !IsImageAddress(currentPid, address) && !IsArgvAddress(currentPid, address)) {
+        var pid = kernel.PIDOwnsRam(currentPid, address);
+        if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !kernel.IsImageAddress(currentPid, address) && !kernel.IsArgvAddress(currentPid, address)) {
             console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid, 'color: blue', 'color: black');
         }
     }
