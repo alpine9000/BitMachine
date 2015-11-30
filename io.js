@@ -2,7 +2,6 @@
  * Copyright © Enable Software Pty Ltd 2013 - All rights reserved
  */
 
-
 var io = {
     ktrace: undefined,
     consoleBuffer: [],
