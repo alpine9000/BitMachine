@@ -1767,7 +1767,7 @@ function MallocList(pid, bitLength) {
    io.malloc.readAllocs = _.filter(io.malloc.alloc, function(a) {
        return a.pid == pid; 
    });
-   MallocFreePid(pid);
+  // MallocFreePid(pid);
    console.log("[%c" + ToHex(simulator.address) + "%c] MallocList(" + pid + ")", 'color: blue', 'color: black');
 }
     
