@@ -1651,10 +1651,10 @@ function UnlinkPath(data)
         var fs = new FileSystem().done(function() {
             //var path = unlink.path.replace(io.file.localMount, io.file.localMountPoint);
             var path = FilesystemGetRemoteName(unlink.path);
-            console.log("UnlinkPath: FIleSystem ready")
-            console.log(unlink)
-            console.log(this)
-            console.log(fs)
+            //console.log("UnlinkPath: FIleSystem ready")
+            //console.log(unlink)
+            //console.log(this)
+            //console.log(fs)
             this.rm(path).done(function(fileData) {
                    unlink.status = 0;
                }).fail(function() {
