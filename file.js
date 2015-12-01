@@ -105,7 +105,7 @@ FileSystem.prototype.rm = function (path) {
     var deferred = $.Deferred();
     var _this = this;
     
-    console.log("FileSystem.rm: " + path);
+    //console.log("FileSystem.rm: " + path);
     
     //this.filer.open(path, function() {
         _this.filer.rm(path, function() {
