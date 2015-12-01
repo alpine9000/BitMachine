@@ -1782,7 +1782,7 @@ function MallocFreeAddress(address) {
         });
         
         if (newalloc.length == io.malloc.alloc.length) {
-            console.log("[%c" + ToHex(simulator.address) + "%c] MallocFree(" + address + ") : Free unknown", 'color: blue', 'color: black');
+            console.log("[%c" + ToHex(simulator.address) + "%c] MallocFree(" + ToHex(address) + ") : Free unknown", 'color: blue', 'color: black');
         }
         
         io.malloc.alloc = newalloc;
