@@ -75,7 +75,7 @@ GDFileSystem.prototype.GetObjectFromFilename = function (parent, path) {
               });
               retrievePageOfChildren(request, result);
             } else {
-                if (result.length == 1 && result[0] !== undefined) {
+                if (result.length > 0 && result[0] !== undefined) {
                     deferred.resolve(result[0]);
                 } else {
                     deferred.reject();
