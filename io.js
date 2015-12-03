@@ -13,8 +13,23 @@ var kernel = {
         
         this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
         
-        cpu.ReadRam32 = cpu.CheckReadRam32
+        cpu.ReadRam32 = this.CheckReadRam32
     }, 
+    
+    CheckReadRam32 : function(address) {
+    
+        var currentPid = kernel.CurrentPid();
+        
+        if (currentPid != 0 && currentPid != 1) {
+            var pid = kernel.PIDOwnsRam(currentPid, address);
+            if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !kernel.IsImageAddress(currentPid, address) && !kernel.IsArgvAddress(currentPid, address)) {
+                console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + "str: " + kernel.ReadRamString(address), 'color: blue', 'color: black');
+            }
+        }
+        
+        return simulator.ram[(address - cpu.ramStart) >>> 2];
+    },
+
     
     ReadRam32: function(address) {
          return simulator.ram[(address- cpu.ramStart) >>> 2]
