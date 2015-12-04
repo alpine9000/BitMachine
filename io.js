@@ -168,17 +168,27 @@ var kernel = {
     		this.stack[currentPid] = [];
     	}
     	this.stack[currentPid].push(address);
+    	if (this.stack[currentPid].length > 1000) {
+    		this.stack[currentPid].shift();
+    	}
     },
     
     PopStack: function () 
     {
-    	var currentPid = 0; //kernel.CurrentPid();
+    /*	var currentPid = 0; //kernel.CurrentPid();
     
     	if (this.stack[currentPid] !== undefined) {
     		this.stack[currentPid].pop();
     	} else {
     		console.log("kernel.PopStack: empty stack for pid " + currentPid);
-    	}
+    	}*/
+    },
+    
+    DumpStack: function()
+    {
+    	_.each(this.stack[0], function(a) {
+    		console.log("0x"+ToHex(a) + " " + simulator.disa.symbols.byAddress[a]);
+    	});
     },
     
     instruction0000000000001011: function(instruction) {
