@@ -14,10 +14,10 @@ var kernel = {
         this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
         
         cpu.ReadRam32 = this.CheckReadRam32;
-        cpu.instructions.instruction0000000000001011 = this.instruction0000000000001011;
-        cpu.instructions.instruction1011dddddddddddd = this.instruction1011dddddddddddd;
-        cpu.instructions.instruction0000mmmm00000011 = this.instruction0000mmmm00000011;
-        cpu.instructions.instruction0100mmmm00001011 = this.instruction0100mmmm00001011;
+        simulator.instructionProcessors[107] = this.instruction1011dddddddddddd;
+	simulator.instructionProcessors[108] = this.instruction0000mmmm00000011;
+        simulator.instructionProcessors[110] = this.instruction0100mmmm00001011;
+        simulator.instructionProcessors[111] = this.instruction0000000000001011;
     }, 
     
     CheckReadRam32 : function(address) {
