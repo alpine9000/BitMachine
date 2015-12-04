@@ -10,8 +10,8 @@ var kernel = {
             this.threadMax = cpu.ReadRam32(this.threadMaxSymbol.st_value);
         }
         this.threadTable = this.GetThreadTable();
-        
         this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
+        this.stack = {};
         
         cpu.ReadRam32 = this.CheckReadRam32;
         simulator.instructionProcessors[107] = this.instruction1011dddddddddddd;
@@ -161,10 +161,31 @@ var kernel = {
         return undefined;
     },
     
+    PushStack: function (address) 
+    {
+    	var currentPid = kernel.CurrentPid();
+    	if (this.stack[currentPid] === undefined) {
+    		this.stack[currentPid] = [];
+    	}
+    	this.stack[currentPid].push(address);
+    },
+    
+    PopStack: function () 
+    {
+    	var currentPid = kernel.CurrentPid();
+    
+    	if (this.stack[currentPid] !== undefined) {
+    		this.stack[currentPid].pop();
+    	} else {
+    		console.log("kernel.PopStack: empty stack for pid " + currentPid);
+    	}
+    },
+    
     instruction0000000000001011: function(instruction) {
     	// RTS 
     	// Delayed branch, PR ? PC 
     	var result = (cpu.RtsHook(), cpu.GetPR());
+    	kernel.PopStack();
     	cpu.DelayedBranch(result);
     },
     
@@ -175,6 +196,7 @@ var kernel = {
     	cpu.SetPR(result);
     	
         var result = ((((cpu.SignExtendAddressComponent(instruction, 'd') << 1) + cpu.GetPC())>>1)<<1);
+        kernel.PushStack(result);
     	cpu.DelayedBranch(result);
     },
     
@@ -185,7 +207,8 @@ var kernel = {
     	cpu.SetPR(result);
 	
         var result = (cpu.GetR(instruction.m) + cpu.GetPC());
-	    cpu.DelayedBranch(result);
+        kernel.PushStack(result);
+	cpu.DelayedBranch(result);
     },
 
     instruction0100mmmm00001011 : function(instruction) {
@@ -195,7 +218,8 @@ var kernel = {
     	cpu.SetPR(result);
 	
         var result = (cpu.GetR(instruction.m));
-	    cpu.DelayedBranch(result);
+        kernel.PushStack(result);
+	cpu.DelayedBranch(result);
     }
 }
 
