@@ -13,7 +13,11 @@ var kernel = {
         
         this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
         
-        cpu.ReadRam32 = this.CheckReadRam32
+        cpu.ReadRam32 = this.CheckReadRam32;
+        cpu.instructions.instruction0000000000001011 = this.instruction0000000000001011;
+        cpu.instructions.instruction1011dddddddddddd = this.instruction1011dddddddddddd;
+        cpu.instructions.instruction0000mmmm00000011 = this.instruction0000mmmm00000011;
+        cpu.instructions.instruction0100mmmm00001011 = this.instruction0100mmmm00001011;
     }, 
     
     CheckReadRam32 : function(address) {
@@ -155,9 +159,44 @@ var kernel = {
         }
         
         return undefined;
+    },
+    
+    instruction0000000000001011: function(instruction) {
+    	// RTS 
+    	// Delayed branch, PR ? PC 
+    	var result = (cpu.RtsHook(), cpu.GetPR());
+    	cpu.DelayedBranch(result);
+    },
+    
+    instruction1011dddddddddddd : function(instruction) {
+    	// BSR label 
+    	// Delayed branch, PC ? PR, disp × 2 + PC ? PC 
+    	var result = (cpu.SubroutineHook(), cpu.GetPC());
+    	cpu.SetPR(result);
+    	
+        var result = ((((cpu.SignExtendAddressComponent(instruction, 'd') << 1) + cpu.GetPC())>>1)<<1);
+    	cpu.DelayedBranch(result);
+    },
+    
+    instruction0000mmmm00000011 : function(instruction) {
+    	// BSRF Rm 
+    	// Delayed branch, PC ? PR, Rm + PC ? PC 
+    	var result = (cpu.SubroutineHook(), cpu.GetPC());
+    	cpu.SetPR(result);
+	
+        var result = (cpu.GetR(instruction.m) + cpu.GetPC());
+	    cpu.DelayedBranch(result);
+    },
+
+    instruction0100mmmm00001011 : function(instruction) {
+    	// JSR @Rm 
+    	// Delayed branch, PC ? PR, Rm ? PC 
+    	var result = (cpu.SubroutineHook(), cpu.GetPC());
+    	cpu.SetPR(result);
+	
+        var result = (cpu.GetR(instruction.m));
+	    cpu.DelayedBranch(result);
     }
-
-
 }
 
 var io = {
