@@ -163,7 +163,7 @@ var kernel = {
     
     PushStack: function (address) 
     {
-    	var currentPid = kernel.CurrentPid();
+    	var currentPid = 0;//kernel.CurrentPid();
     	if (this.stack[currentPid] === undefined) {
     		this.stack[currentPid] = [];
     	}
@@ -172,7 +172,7 @@ var kernel = {
     
     PopStack: function () 
     {
-    	var currentPid = kernel.CurrentPid();
+    	var currentPid = 0; //kernel.CurrentPid();
     
     	if (this.stack[currentPid] !== undefined) {
     		this.stack[currentPid].pop();
