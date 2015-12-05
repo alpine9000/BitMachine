@@ -161,19 +161,19 @@ var kernel = {
         return undefined;
     },
     
-    PushStack: function (address) 
+    PushStack: function (address, opcode) 
     {
     	var currentPid = 0;//kernel.CurrentPid();
     	if (this.stack[currentPid] === undefined) {
     		this.stack[currentPid] = [];
     	}
-    	this.stack[currentPid].push(address);
+    	this.stack[currentPid].push({address: address, opcode: opcode);
     	if (this.stack[currentPid].length > 1000) {
     		this.stack[currentPid].shift();
     	}
     },
     
-    PopStack: function () 
+    PopStack: function (opcode) 
     {
     /*	var currentPid = 0; //kernel.CurrentPid();
     
@@ -182,6 +182,15 @@ var kernel = {
     	} else {
     		console.log("kernel.PopStack: empty stack for pid " + currentPid);
     	}*/
+    	
+    	var currentPid = 0;//kernel.CurrentPid();
+    	if (this.stack[currentPid] === undefined) {
+    		this.stack[currentPid] = [];
+    	}
+    	this.stack[currentPid].push({address: address, opcode: opcode);
+    	if (this.stack[currentPid].length > 1000) {
+    		this.stack[currentPid].shift();
+    	}
     },
     
     DumpStack: function()
@@ -195,7 +204,7 @@ var kernel = {
     	// RTS 
     	// Delayed branch, PR ? PC 
     	var result = (cpu.RtsHook(), cpu.GetPR());
-    	kernel.PopStack();
+    	kernel.PopStack("RTS");
     	cpu.DelayedBranch(result);
     },
     
@@ -206,7 +215,7 @@ var kernel = {
     	cpu.SetPR(result);
     	
         var result = ((((cpu.SignExtendAddressComponent(instruction, 'd') << 1) + cpu.GetPC())>>1)<<1);
-        kernel.PushStack(result);
+        kernel.PushStack(result, "BSR");
     	cpu.DelayedBranch(result);
     },
     
@@ -217,7 +226,7 @@ var kernel = {
     	cpu.SetPR(result);
 	
         var result = (cpu.GetR(instruction.m) + cpu.GetPC());
-        kernel.PushStack(result);
+        kernel.PushStack(result, "BSRF");
 	cpu.DelayedBranch(result);
     },
 
@@ -228,7 +237,7 @@ var kernel = {
     	cpu.SetPR(result);
 	
         var result = (cpu.GetR(instruction.m));
-        kernel.PushStack(result);
+        kernel.PushStack(result, "JSR");
 	cpu.DelayedBranch(result);
     }
 }
