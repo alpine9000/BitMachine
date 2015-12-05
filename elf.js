@@ -277,8 +277,15 @@ Elf32.prototype.CreateImage = function(loadBSS) {
 
 Elf32.prototype.Load = function(targetAddress)
 {
+    var checking = kernel.Checking();
+    if (checking) {
+        kernel.CheckRam(0)
+    }
     var view = new DataView(this.image);
     for (var i = 0; i < this.image.byteLength; i+=4) {
         cpu.Write32(targetAddress+i, view.getUint32(i, false));
+    }
+    if (checking) {
+        kernel.CheckRam(1);
     }
 };
