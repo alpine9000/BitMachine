@@ -3,7 +3,7 @@
  */
 
 var kernel = {
-    init: function() {
+    init: function(nomemcheck) {
         this.threadMax = 5;
         this.threadMaxSymbol = this.GetElfSymbol("_kernel_threadMax");
         if (this.threadMaxSymbol !== undefined) {
@@ -15,6 +15,10 @@ var kernel = {
         
         cpu.ReadRam32 = this.CheckReadRam32;
         cpu.WriteRam32 = this.CheckWriteRam32;
+        
+        if (typeof(nomemcheck) != "undefined") {
+        	return;
+        }
         simulator.instructionProcessors[107] = this.instruction1011dddddddddddd;
 	simulator.instructionProcessors[108] = this.instruction0000mmmm00000011;
         simulator.instructionProcessors[110] = this.instruction0100mmmm00001011;
