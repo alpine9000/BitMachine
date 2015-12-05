@@ -36,7 +36,7 @@ var kernel = {
         return simulator.ram[(address - cpu.ramStart) >>> 2];
     },
     
-    CheckWriteRam32 = function(address, data) {
+    CheckWriteRam32 : function(address, data) {
     	var currentPid = kernel.CurrentPid();
         
         if (currentPid != 0 && currentPid != 1) {
