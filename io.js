@@ -101,7 +101,7 @@ var kernel = {
                         }
                     }
                     var end = a;
-                    if (address >= start && address < end) {
+                    if (address >= start && address <= end) {
                         return true;
                     }
                 }
