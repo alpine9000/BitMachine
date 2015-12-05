@@ -932,6 +932,9 @@
     
     <script type="text/javascript">
         $(document).ready(function() {
+            require.config({
+    		urlArgs: "bust=" + (new Date()).getTime()
+	    });
             function processResize() {
                 var x = $(".full-height");
                 x.height($(window).height()-x.offset().top);
