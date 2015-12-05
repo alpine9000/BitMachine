@@ -45,7 +45,11 @@ var kernel = {
 		cpu.WriteRam16 = this.save.WriteRam16;
 		cpu.WriteRam8 = this.save.WriteRam8;
     	}
-    	
+    	this.checkRam = on;
+    },
+    
+    Checking : function {
+    	return this.checkRam;
     },
     
     ValidateWrite: function(address, data) {
