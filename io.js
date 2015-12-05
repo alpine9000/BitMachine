@@ -181,7 +181,7 @@ var kernel = {
         var data = "", c;
         
         for (; c !== 0 && (address-baseAddress) < 1024; address++) {
-            c = kernel.Read8(address);
+            c = kernel.ReadRam8(address);
             if (c !== 0) {
                 data += String.fromCharCode(c);
             }
