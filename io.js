@@ -28,6 +28,7 @@ var kernel = {
             var pid = kernel.PIDOwnsRam(currentPid, address);
             if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !kernel.IsImageAddress(currentPid, address) && !kernel.IsArgvAddress(currentPid, address)) {
                 console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + "str: " + kernel.ReadRamString(address), 'color: blue', 'color: black');
+                kernel.DumpStack()
             }
         }
         
