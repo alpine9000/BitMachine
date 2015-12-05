@@ -196,7 +196,7 @@ var kernel = {
     DumpStack: function()
     {
     	_.each(this.stack[0], function(a) {
-    		console.log(a.opcode +  " 0x"+ToHex(a.address) + " 0x" + ToHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
+    		console.log(a.opcode +  " 0x"+ToHex(a.address) + " 0x" + ToHex(a.from === undefined ? 0 : a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
     	});
     },
     
