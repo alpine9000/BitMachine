@@ -18,15 +18,35 @@ var kernel = {
         simulator.instructionProcessors[110] = this.instruction0100mmmm00001011;
         simulator.instructionProcessors[111] = this.instruction0000000000001011;
         
-        if (typeof(nomemcheck) == "undefined") {
-            cpu.ReadRam32 = this.CheckReadRam32;
-            cpu.ReadRam16 = this.CheckReadRam16;
-            cpu.ReadRam8 = this.CheckReadRam8;
-            cpu.WriteRam32 = this.CheckWriteRam32;
-            cpu.WriteRam16 = this.CheckWriteRam16;
-            cpu.WriteRam8 = this.CheckWriteRam8;
-        }
+        this.save = {};
+        this.save.ReadRam32 = cpu.ReadRam32;
+        this.save.ReadRam16 = cpu.ReadRam16;
+        this.save.ReadRam8 = cpu.ReadRam8;
+        this.save.WriteRam32 = cpu.WriteRam32; 
+        this.save.WriteRam16 = cpu.WriteRam16; 
+        this.save.WriteRam8 = cpu.WriteRam8; 
+        
+        this.CheckRam(typeof(nomemcheck) == "undefined");
     }, 
+    
+    CheckRam : function(on) {
+    	if (on) {
+	    	cpu.ReadRam32 = this.CheckReadRam32;
+		cpu.ReadRam16 = this.CheckReadRam16;
+		cpu.ReadRam8 = this.CheckReadRam8;
+		cpu.WriteRam32 = this.CheckWriteRam32;
+		cpu.WriteRam16 = this.CheckWriteRam16;
+		cpu.WriteRam8 = this.CheckWriteRam8;
+    	} else {
+    		cpu.ReadRam32 = this.save.ReadRam32;
+		cpu.ReadRam16 = this.save.ReadRam16;
+		cpu.ReadRam8 = this.save.ReadRam8;
+		cpu.WriteRam32 = this.save.WriteRam32;
+		cpu.WriteRam16 = this.save.WriteRam16;
+		cpu.WriteRam8 = this.save.WriteRam8;
+    	}
+    	
+    },
     
     ValidateWrite: function(address, data) {
     	var currentPid = kernel.CurrentPid();
