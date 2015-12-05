@@ -134,10 +134,10 @@ var kernel = {
             var image = kernel.Read(i, 5);
             var imageSize = kernel.Read(i, 8);
             var stack = kernel.Read(i, 4);
-            var argv = [], cwd = "";
+            var argv = [FullHex(kernel.Read(i, 7)) + " "], cwd = "", argv_addr = [];
             if (state != 0 && kernel.Read(i, 6) > 0) {
                 for (var c = 0; kernel.ReadRam32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
-                    argv.push(kernel.ReadRamString(kernel.ReadRam32(kernel.Read(i, 7)+(c*4))));
+                    argv.push(kernel.ReadRamString(kernel.ReadRam32(kernel.Read(i, 7)+(c*4))) + "(" + FullHex(kernel.ReadRam32(kernel.Read(i, 7)+(c*4))) + ")");
                 }
                 
                 cwd = kernel.ReadRamString(kernel.Address(i, 12));
