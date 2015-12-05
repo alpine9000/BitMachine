@@ -776,12 +776,18 @@ cpu.SetPC = function(a) {
     simulator.address = a;
 
     if (simulator.interactive && !simulator.disassemble) {
-        if (simulator.setFromSubroutine) {
-            simulator.returnTabStack.push($(".dynamic-tab.active a").data("address"));
-            DisaView.prototype.instance.ShowSymbolView(simulator.address);
-        } else if (simulator.nextTab) {
-            $(".dynamic-tab a[data-address=" + simulator.nextTab + "]").click();
-            simulator.nextTab = undefined;
+        if (0) {
+            if (simulator.setFromSubroutine) {
+                simulator.returnTabStack.push($(".dynamic-tab.active a").data("address"));
+                DisaView.prototype.instance.ShowSymbolView(simulator.address);
+            } else if (simulator.nextTab) {
+                $(".dynamic-tab a[data-address=" + simulator.nextTab + "]").click();
+                simulator.nextTab = undefined;
+            } else {
+                GetDisaView().done(function() {
+                    this.GotoAddress(simulator.address - 4);
+                });
+            }
         } else {
             GetDisaView().done(function() {
                 this.GotoAddress(simulator.address - 4);
