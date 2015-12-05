@@ -1871,7 +1871,7 @@ function MallocList(pid, bitLength) {
        return a.pid == pid; 
    });
   // MallocFreePid(pid);
-   console.log("[%c" + ToHex(simulator.address) + "%c] MallocList(" + pid + ")", 'color: blue', 'color: black');
+  //console.log("[%c" + ToHex(simulator.address) + "%c] MallocList(" + pid + ")", 'color: blue', 'color: black');
 }
     
 function MallocSize(size) {
