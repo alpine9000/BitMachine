@@ -141,7 +141,7 @@ var kernel = {
 	}
 
         return data;
-    }
+    },
     
     Read: function(index, offset) {
         return kernel.ReadRam32((index*(kernel.threadTable.st_size/kernel.threadMax))+kernel.threadTable.st_value+(offset*4))
