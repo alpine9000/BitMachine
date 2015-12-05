@@ -12,17 +12,16 @@ var kernel = {
         this.threadTable = this.GetThreadTable();
         this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
         this.stack = {};
-        
-        cpu.ReadRam32 = this.CheckReadRam32;
-        cpu.WriteRam32 = this.CheckWriteRam32;
-        
-        if (typeof(nomemcheck) != "undefined") {
-        	return;
-        }
+       
         simulator.instructionProcessors[107] = this.instruction1011dddddddddddd;
 	simulator.instructionProcessors[108] = this.instruction0000mmmm00000011;
         simulator.instructionProcessors[110] = this.instruction0100mmmm00001011;
         simulator.instructionProcessors[111] = this.instruction0000000000001011;
+        
+        if (typeof(nomemcheck) == "undefined") {
+            cpu.ReadRam32 = this.CheckReadRam32;
+            cpu.WriteRam32 = this.CheckWriteRam32;
+        }
     }, 
     
     CheckReadRam32 : function(address) {
