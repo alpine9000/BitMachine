@@ -163,7 +163,7 @@ var kernel = {
     
     PushStack: function (address, opcode) 
     {
-    	var currentPid = 0;//kernel.CurrentPid();
+    	var currentPid = kernel.CurrentPid();
     	if (this.stack[currentPid] === undefined) {
     		this.stack[currentPid] = [];
     	}
@@ -175,8 +175,8 @@ var kernel = {
     
     PopStack: function (opcode) 
     {
-    	if (0) {
-	    	var currentPid = 0; //kernel.CurrentPid();
+    	if (1) {
+	    	var currentPid = kernel.CurrentPid();
 	    
 	    	if (this.stack[currentPid] !== undefined) {
 	    		this.stack[currentPid].pop();
@@ -197,8 +197,10 @@ var kernel = {
     
     DumpStack: function()
     {
-    	_.each(this.stack[0], function(a) {
-    		console.log("PID: " + a.pid + " " + a.opcode +  " 0x"+ToHex(a.address) + " 0x" + ToHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
+    	_.each(this.stack, function(stack, pid) {
+	    	_.each(stack, function(a) {
+	    		console.log("PID: " + a.pid + " " + a.opcode +  " 0x"+ToHex(a.address) + " 0x" + ToHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
+	    	});
     	});
     },
     
