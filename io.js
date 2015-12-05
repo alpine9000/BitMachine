@@ -167,7 +167,7 @@ var kernel = {
     	if (this.stack[currentPid] === undefined) {
     		this.stack[currentPid] = [];
     	}
-    	this.stack[currentPid].push({address: address, opcode: opcode});
+    	this.stack[currentPid].push({address: address, from: cpu.GetPR(), opcode: opcode});
     	if (this.stack[currentPid].length > 1000) {
     		this.stack[currentPid].shift();
     	}
@@ -196,7 +196,7 @@ var kernel = {
     DumpStack: function()
     {
     	_.each(this.stack[0], function(a) {
-    		console.log(a.opcode +  " 0x"+ToHex(a.address) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
+    		console.log(a.opcode +  " 0x"+ToHex(a.address) + " 0x" + ToHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
     	});
     },
     
