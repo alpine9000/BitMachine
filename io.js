@@ -14,6 +14,7 @@ var kernel = {
         this.stack = {};
         
         cpu.ReadRam32 = this.CheckReadRam32;
+        cpu.WriteRam32 = this.CheckWriteRam32;
         simulator.instructionProcessors[107] = this.instruction1011dddddddddddd;
 	simulator.instructionProcessors[108] = this.instruction0000mmmm00000011;
         simulator.instructionProcessors[110] = this.instruction0100mmmm00001011;
@@ -34,8 +35,20 @@ var kernel = {
         
         return simulator.ram[(address - cpu.ramStart) >>> 2];
     },
-
     
+    CheckWriteRam32 = function(address, data) {
+    	var currentPid = kernel.CurrentPid();
+        
+        if (currentPid != 0 && currentPid != 1) {
+            var pid = kernel.PIDOwnsRam(currentPid, address);
+            if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !kernel.IsImageAddress(currentPid, address) && !kernel.IsArgvAddress(currentPid, address)) {
+                console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + "str: " + kernel.ReadRamString(address), 'color: blue', 'color: black');
+                kernel.DumpStack()
+            }
+        }
+    	simulator.ram[(address - cpu.ramStart) >>> 2] = data;
+    },
+
     ReadRam32: function(address) {
          return simulator.ram[(address- cpu.ramStart) >>> 2]
     },
