@@ -125,6 +125,24 @@ var kernel = {
          return simulator.ram[(address- cpu.ramStart) >>> 2]
     },
     
+    ReadRam8 : function(address) {
+    	var alignedAddress = (((address >>> 0) >>> 2) << 2) >>> 0;
+    	var offset = address - alignedAddress;
+    	var data = simulator.ram[(alignedAddress - cpu.ramStart) >>> 2];
+
+	if (offset === 0) {
+	    data = (data >>> 24) & 0xFF;
+	} else if (offset === 1) {
+	    data = (data >>> 16) & 0xFF;
+	} else if (offset === 2) {
+	    data = (data >>> 8) & 0xFF;
+	} else {
+	    data = data & 0xFF;
+	}
+
+        return data;
+    }
+    
     Read: function(index, offset) {
         return kernel.ReadRam32((index*(kernel.threadTable.st_size/kernel.threadMax))+kernel.threadTable.st_value+(offset*4))
     },
@@ -177,9 +195,9 @@ var kernel = {
                         return true;
                     }
                     var a = start = kernel.ReadRam32(kernel.Read(i, 7)+(c*4));
-                    var data = cpu.ReadRam8(a);
+                    var data = kernel.ReadRam8(a);
                     while (data != 0) {
-                        data = cpu.ReadRam8(++a);
+                        data = kernel.ReadRam8(++a);
                         if (a-start > 1024) {
                             console.log("kernel.IsArgvAddress: bailing out");
                             return false;
