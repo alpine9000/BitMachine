@@ -117,6 +117,10 @@ function ToHex(num) {
     return num.toString(16);
 }
 
+function FullHex(num) {
+    return ("00000000" + ToHex(num)).substr(-8)
+}
+
 function SetBit(mask, bit) {
     return mask |= (1 << bit);
 }
