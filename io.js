@@ -168,29 +168,29 @@ var kernel = {
     		this.stack[currentPid] = [];
     	}
     	this.stack[currentPid].push({address: address, from: cpu.GetPR(), opcode: opcode});
-    	if (this.stack[currentPid].length > 1000) {
+    	if (0 && this.stack[currentPid].length > 1000) {
     		this.stack[currentPid].shift();
     	}
     },
     
     PopStack: function (opcode) 
     {
-    /*	var currentPid = 0; //kernel.CurrentPid();
+    	var currentPid = 0; //kernel.CurrentPid();
     
     	if (this.stack[currentPid] !== undefined) {
     		this.stack[currentPid].pop();
     	} else {
     		console.log("kernel.PopStack: empty stack for pid " + currentPid);
-    	}*/
+    	}
     	
-    	var currentPid = 0;//kernel.CurrentPid();
+    /*	var currentPid = 0;//kernel.CurrentPid();
     	if (this.stack[currentPid] === undefined) {
     		this.stack[currentPid] = [];
     	}
     	this.stack[currentPid].push({address: cpu.GetPR(), opcode: opcode});
     	if (this.stack[currentPid].length > 1000) {
     		this.stack[currentPid].shift();
-    	}
+    	}*/
     },
     
     DumpStack: function()
