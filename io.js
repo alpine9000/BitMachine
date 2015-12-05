@@ -167,7 +167,7 @@ var kernel = {
     	if (this.stack[currentPid] === undefined) {
     		this.stack[currentPid] = [];
     	}
-    	this.stack[currentPid].push({address: address, from: cpu.GetPR(), opcode: opcode});
+    	this.stack[currentPid].push({address: address, from: cpu.GetPR(), opcode: opcode, pid: kernel.CurrentPid()});
     	if (0 && this.stack[currentPid].length > 1000) {
     		this.stack[currentPid].shift();
     	}
@@ -175,28 +175,30 @@ var kernel = {
     
     PopStack: function (opcode) 
     {
-    	var currentPid = 0; //kernel.CurrentPid();
-    
-    	if (this.stack[currentPid] !== undefined) {
-    		this.stack[currentPid].pop();
+    	if (0) {
+	    	var currentPid = 0; //kernel.CurrentPid();
+	    
+	    	if (this.stack[currentPid] !== undefined) {
+	    		this.stack[currentPid].pop();
+	    	} else {
+	    		console.log("kernel.PopStack: empty stack for pid " + currentPid);
+	    	}
     	} else {
-    		console.log("kernel.PopStack: empty stack for pid " + currentPid);
+	    	var currentPid = 0;//kernel.CurrentPid();
+	    	if (this.stack[currentPid] === undefined) {
+	    		this.stack[currentPid] = [];
+	    	}
+	    	this.stack[currentPid].push({address: cpu.GetPR(), opcode: opcode, from: cpu.GetPC(), pid: kernel.CurrentPid()});
+	    	if (this.stack[currentPid].length > 1000) {
+	    		this.stack[currentPid].shift();
+	    	}
     	}
-    	
-    /*	var currentPid = 0;//kernel.CurrentPid();
-    	if (this.stack[currentPid] === undefined) {
-    		this.stack[currentPid] = [];
-    	}
-    	this.stack[currentPid].push({address: cpu.GetPR(), opcode: opcode});
-    	if (this.stack[currentPid].length > 1000) {
-    		this.stack[currentPid].shift();
-    	}*/
     },
     
     DumpStack: function()
     {
     	_.each(this.stack[0], function(a) {
-    		console.log(a.opcode +  " 0x"+ToHex(a.address) + " 0x" + ToHex(a.from === undefined ? 0 : a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
+    		console.log("PID: " + a.pid + " " + a.opcode +  " 0x"+ToHex(a.address) + " 0x" + ToHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
     	});
     },
     
