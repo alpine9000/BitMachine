@@ -48,7 +48,7 @@ var kernel = {
     	this.checkRam = on;
     },
     
-    Checking : function {
+    Checking : function() {
     	return this.checkRam;
     },
     
