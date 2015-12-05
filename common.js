@@ -118,7 +118,7 @@ function ToHex(num) {
 }
 
 function FullHex(num) {
-    return ("00000000" + ToHex(num)).substr(-8)
+    return "0x" + ("00000000" + ToHex(num)).substr(-8)
 }
 
 function SetBit(mask, bit) {
