@@ -198,8 +198,9 @@ var kernel = {
     DumpStack: function()
     {
     	_.each(this.stack, function(stack, pid) {
+    		console.log("PID: " + pid)
 	    	_.each(stack, function(a) {
-	    		console.log("PID: " + a.pid + " " + a.opcode +  " 0x"+ToHex(a.address) + " 0x" + ToHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
+	    		console.log("    " + FullHex(a.address) + "   " + a.opcode + " " + FullHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
 	    	});
     	});
     },
