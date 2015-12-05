@@ -59,7 +59,7 @@ DisaView.prototype.RenderDisassembleLine = function(address) {
     return html.html();
 }
 
-DisaView.prototype.RenderDisassemblyWindow = function(address) {
+DisaView.prototype.RenderDisassemblyWindow = function(address, ensureVisible) {
     //Slow
     //return
     var container = $("#disa-disassembly");
@@ -72,8 +72,16 @@ DisaView.prototype.RenderDisassemblyWindow = function(address) {
     } else {
         this.renderDisassemblyWindowAddress = address;
     }
+    
     container.empty();
     var end = address + (800/this.disassemblyLineHeight);
+    
+    
+    if (typeof(ensureVisible) !== "undefined" && simulator.address >= end || simulator.address < address) {
+        address  = this.renderDisassemblyWindowAddress = simulator.address;
+        end = address + (800/this.disassemblyLineHeight);
+    }
+    
     for (; address < end; address += 2) {
         container.append(this.RenderDisassembleLine(address));
     }
