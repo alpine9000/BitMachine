@@ -20,26 +20,15 @@ var kernel = {
         
         if (typeof(nomemcheck) == "undefined") {
             cpu.ReadRam32 = this.CheckReadRam32;
+            cpu.ReadRam16 = this.CheckReadRam16;
+            cpu.ReadRam8 = this.CheckReadRam8;
             cpu.WriteRam32 = this.CheckWriteRam32;
+            cpu.WriteRam16 = this.CheckWriteRam16;
+            cpu.WriteRam8 = this.CheckWriteRam8;
         }
     }, 
     
-    CheckReadRam32 : function(address) {
-    
-        var currentPid = kernel.CurrentPid();
-        
-        if (currentPid != 0 && currentPid != 1) {
-            var pid = kernel.PIDOwnsRam(currentPid, address);
-            if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !kernel.IsImageAddress(currentPid, address) && !kernel.IsArgvAddress(currentPid, address)) {
-                console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + " str: " + kernel.ReadRamString(address), 'color: blue', 'color: black');
-                kernel.DumpStack()
-            }
-        }
-        
-        return simulator.ram[(address - cpu.ramStart) >>> 2];
-    },
-    
-    CheckWriteRam32 : function(address, data) {
+    ValidateWrite: function(address, data) {
     	var currentPid = kernel.CurrentPid();
         
         if (currentPid != 0 && currentPid != 1) {
@@ -49,7 +38,87 @@ var kernel = {
                 kernel.DumpStack()
             }
         }
+    }, 
+    
+    ValidateRead: function(address) {
+    	var currentPid = kernel.CurrentPid();
+        
+        if (currentPid != 0 && currentPid != 1) {
+            var pid = kernel.PIDOwnsRam(currentPid, address);
+            if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !kernel.IsImageAddress(currentPid, address) && !kernel.IsArgvAddress(currentPid, address)) {
+                console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + " str: " + kernel.ReadRamString(address), 'color: blue', 'color: black');
+                kernel.DumpStack()
+            }
+        }
+    },
+    
+    CheckReadRam32 : function(address) {
+        kernel.ValidateRead(address);
+        return simulator.ram[(address - cpu.ramStart) >>> 2];
+    },
+    
+    CheckReadRam16 : function(address, bitLength) {
+	kernel.ValidateRead(address);
+	var alignedAddress = ((address >>> 0) & 0xFFFFFFFC) >>> 0;
+	
+	var offset = address - alignedAddress;
+	var data = simulator.ram[(alignedAddress - cpu.ramStart) >>> 2];
+	
+	if (offset === 0) {
+	return data >>> 16;
+	} else {
+	return data & 0xFFFF;
+	}
+    },
+
+    CheckReadRam8 : function(address) {
+    	kernel.ValidateRead(address);
+    	var alignedAddress = (((address >>> 0) >>> 2) << 2) >>> 0;
+    	var offset = address - alignedAddress;
+    	var data = simulator.ram[(alignedAddress - cpu.ramStart) >>> 2];
+
+	if (offset === 0) {
+	    data = (data >>> 24) & 0xFF;
+	} else if (offset === 1) {
+	    data = (data >>> 16) & 0xFF;
+	} else if (offset === 2) {
+	    data = (data >>> 8) & 0xFF;
+	} else {
+	    data = data & 0xFF;
+	}
+
+        return data;
+    },
+    
+    CheckWriteRam32 : function(address, data) {
+    	kernel.ValidateWrite(address, data);
     	simulator.ram[(address - cpu.ramStart) >>> 2] = data;
+    },
+    
+    
+    CheckWriteRam16 : function(address, data) {
+    	kernel.ValidateWrite(address, data);
+	var alignedAddress = (((address >>> 0) >>> 2) << 2) >>> 0;
+	var existingData = simulator.ram[(alignedAddress - cpu.ramStart) >>> 2];
+	var offset = address - alignedAddress;
+	var existing = ____dv;
+	existing.setUint32(0, existingData, false);
+	existing.setUint16(offset, data, false);
+	simulator.ram[(alignedAddress - cpu.ramStart) >>> 2] = existing.getUint32(0, false);
+	return;
+    },
+
+
+    CheckWriteRam8 : function(address, data) {
+    	kernel.ValidateWrite(address, data);
+	var alignedAddress = (((address >>> 0) >>> 2) << 2) >>> 0;
+	var index = (alignedAddress - cpu.ramStart) >>> 2;
+	var existingData = simulator.ram[index];
+	var offset = address - alignedAddress;
+	var existing = ____dv;
+	existing.setUint32(0, existingData, false);
+	existing.setUint8(offset, data, false);
+	simulator.ram[index] = existing.getUint32(0, false);
     },
 
     ReadRam32: function(address) {
