@@ -167,7 +167,7 @@ var kernel = {
     	if (this.stack[currentPid] === undefined) {
     		this.stack[currentPid] = [];
     	}
-    	this.stack[currentPid].push({address: address, opcode: opcode);
+    	this.stack[currentPid].push({address: address, opcode: opcode});
     	if (this.stack[currentPid].length > 1000) {
     		this.stack[currentPid].shift();
     	}
@@ -187,7 +187,7 @@ var kernel = {
     	if (this.stack[currentPid] === undefined) {
     		this.stack[currentPid] = [];
     	}
-    	this.stack[currentPid].push({address: address, opcode: opcode);
+    	this.stack[currentPid].push({address: address, opcode: opcode});
     	if (this.stack[currentPid].length > 1000) {
     		this.stack[currentPid].shift();
     	}
