@@ -194,6 +194,17 @@ var kernel = {
         return kernel.Read(kernel.ReadRam32(this.currentThreadAddress), 0);
     },
     
+    PidState : function(pid)
+    {
+    	for (var i = 0; i < kernel.threadMax; i++) {
+    	    if (kernel.Read(i, 0) == pid) {
+    		return kernel.Read(i, 1);	
+    	    }
+    	}
+    	
+    	return undefined;
+    },
+    
     IsImageAddress: function(pid, address)
     {
         for (var i = 0; i < kernel.threadMax; i++) {
@@ -207,6 +218,7 @@ var kernel = {
        return false;
     },
 
+    
 
     IsArgvAddress: function(pid, address)
     {
@@ -326,10 +338,12 @@ var kernel = {
     DumpStack: function()
     {
     	_.each(this.stack, function(stack, pid) {
-    		console.log("PID: " + pid)
-	    	_.each(stack, function(a) {
-	    		console.log("    " + FullHex(a.address) + "   " + a.opcode + " " + FullHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
-	    	});
+    		if (kernel.PidState(pid) != 0) {
+	    		console.log("PID: " + pid)
+		    	_.each(stack, function(a) {
+		    		console.log("    " + FullHex(a.address) + "   " + a.opcode + " " + FullHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
+		    	});
+    		}
     	});
     },
     
