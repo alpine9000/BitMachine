@@ -202,7 +202,7 @@ var kernel = {
     	    }
     	}
     	
-    	return undefined;
+    	return 0;
     },
     
     IsImageAddress: function(pid, address)
