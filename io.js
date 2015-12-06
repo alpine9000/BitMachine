@@ -245,6 +245,14 @@ var kernel = {
                     }
                 }
                 
+                for (var c = 9; c < 11; c++) {
+                	if (kernel.Read(i, c) == address) {
+                		console.log("FDS!");
+                		return true;
+                	}
+                }
+                
+                
               //  return false;
             
             }
