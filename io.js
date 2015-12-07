@@ -56,9 +56,15 @@ var kernel = {
     	var currentPid = kernel.CurrentPid();
         
         if (currentPid != 0 && currentPid != 1) {
-            var pid = kernel.PIDOwnsRam(currentPid, address);
+            var pid, startAddress, length;
+            var allocation = kernel.FindAllocation(address);
+            if (allocation != undefined) {
+            	pid = allocation.pid;
+            	startAddress = allocation.address;
+            	length = allocation.length;
+            }
             if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !kernel.IsImageAddress(currentPid, address) && !kernel.IsArgvAddress(currentPid, address)) {
-                console.log("[%c" + ToHex(simulator.address) + "%c] Bad Write: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + "data: " + FullHex(data), 'color: blue', 'color: black');
+                console.log("[%c" + ToHex(simulator.address) + "%c] Bad Write: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + " alloc start: " + FullHex(startAddress) + " (" + length + ") bytes", 'color: blue', 'color: black');
                 kernel.DumpStack()
             }
         }
@@ -68,9 +74,15 @@ var kernel = {
     	var currentPid = kernel.CurrentPid();
         
         if (currentPid != 0 && currentPid != 1) {
-            var pid = kernel.PIDOwnsRam(currentPid, address);
+            var pid, startAddress, length;
+            var allocation = kernel.FindAllocation(address);
+            if (allocation != undefined) {
+            	pid = allocation.pid;
+            	startAddress = allocation.address;
+            	length = allocation.length;
+            }
             if (pid != 0 && pid != 1 && pid != undefined && pid != currentPid && !kernel.IsImageAddress(currentPid, address) && !kernel.IsArgvAddress(currentPid, address)) {
-                console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + " str: " + kernel.ReadRamString(address), 'color: blue', 'color: black');
+                console.log("[%c" + ToHex(simulator.address) + "%c] Bad read: currentPid:" + currentPid + " -> address:" + ToHex(address) + " ownerPid: " + pid + " str: " + kernel.ReadRamString(address) + " alloc start: " + FullHex(startAddress) + " (" + length + ") bytes", 'color: blue', 'color: black');
                 kernel.DumpStack()
             }
         }
@@ -296,17 +308,11 @@ var kernel = {
         console.table(table);
     },
     
-    PIDOwnsRam: function (pid, address)
+    FindAllocation: function (address)
     {
-        var owned = _.find(io.malloc.alloc, function(a) {
+        return _.find(io.malloc.alloc, function(a) {
            return address >= a.address && address < a.address+a.size;
         });
-        
-        if (owned != undefined) {
-            return owned.pid;
-        }
-        
-        return undefined;
     },
     
     PushStack: function (address, opcode) 
