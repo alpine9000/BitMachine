@@ -3,7 +3,7 @@
  */
 
 var kernel = {
-    init: function(nomemcheck) {
+    init: function(ramcheck) {
         this.threadMax = 5;
         this.threadMaxSymbol = this.GetElfSymbol("_kernel_threadMax");
         if (this.threadMaxSymbol !== undefined) {
@@ -26,7 +26,7 @@ var kernel = {
         this.save.WriteRam16 = cpu.WriteRam16; 
         this.save.WriteRam8 = cpu.WriteRam8; 
         
-        this.CheckRam(typeof(nomemcheck) == "undefined");
+        this.CheckRam(typeof(ramcheck) != "undefined");
     }, 
     
     CheckRam : function(on) {
