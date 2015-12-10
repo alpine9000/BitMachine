@@ -367,11 +367,11 @@ var kernel = {
     	}
     },
     
-    DumpStack: function()
+    DumpStack: function(all)
     {
     	var _this = this;
     	_.each(this.stack, function(stack, pid) {
-    		if (kernel.PidState(pid) != 0) {
+    		if (typeof(all) != "undefined" || kernel.PidState(pid) != 0) {
     		
 	    		console.log("PID: " + pid + " " + _this.PidArgv(pid));
 		    	_.each(stack, function(a) {
