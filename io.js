@@ -217,6 +217,24 @@ var kernel = {
     	return 0;
     },
     
+    PidArgv : function(pid)
+    {
+    	for (var i = 0; i < kernel.threadMax; i++) {
+    	    if (kernel.Read(i, 0) == pid) {
+        	var argv = [];
+        	var state = kernel.Read(i, 1);
+	        if (state != 0 && kernel.Read(i, 6) > 0) {
+                   	for (var c = 0; kernel.ReadRam32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
+                    		argv.push(kernel.ReadRamString(kernel.ReadRam32(kernel.Read(i, 7)+(c*4))));
+	                }
+	        }
+    		return argv.join(" ");	
+    	    }
+    	}
+    	
+    	return 0;
+    },
+    
     IsImageAddress: function(pid, address)
     {
         for (var i = 0; i < kernel.threadMax; i++) {
@@ -351,9 +369,11 @@ var kernel = {
     
     DumpStack: function()
     {
+    	var _this = this;
     	_.each(this.stack, function(stack, pid) {
     		if (kernel.PidState(pid) != 0) {
-	    		console.log("PID: " + pid)
+    		
+	    		console.log("PID: " + pid + " " + _this.PidArgv(pid));
 		    	_.each(stack, function(a) {
 		    		console.log("    " + FullHex(a.address) + "   " + a.opcode + " " + FullHex(a.from) + " " + (simulator.disa.symbols.byAddress[a.address] != undefined ? simulator.disa.symbols.byAddress[a.address].name : "unknown"));
 		    	});
