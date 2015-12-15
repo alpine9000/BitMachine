@@ -4,6 +4,9 @@
 
 var kernel = {
     init: function(ramcheck) {
+    	if (typeof(this.threadMax) !== "undefined") {
+    		return;
+    	}
         this.threadMax = 5;
         this.threadMaxSymbol = this.GetElfSymbol("_kernel_threadMax");
         if (this.threadMaxSymbol !== undefined) {
