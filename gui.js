@@ -100,6 +100,14 @@ $(document).ready(function() {
         $("body").toggleClass("retro");
 	});
 	
+	$("body").keyup(function (e) {
+		if (e.target == $("body").get(0)) {
+			if (e.ctrlKey && e.which == 68) { // ctrl	
+			 	$("#load-bitos-from-gdfs").click();
+			}
+		}
+	});
+	
 	$("#load-bitos-fs").on("click", function(e) {
         e.preventDefault();
         GetDisa().done(function() {
