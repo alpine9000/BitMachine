@@ -699,43 +699,43 @@ $(document).ready(function() {
     $("body").keyup(function (e) {
         if ($(".disa-output").is(":visible") && e.target == $("body").get(0) ) {
             
-            if (e.keyCode == 83) {
+            if (e.keyCode == 83) { // s
                $("#disa-simulator-step").click();
             }
 
-            if (e.keyCode == 66) {
+            if (e.keyCode == 66) { // b
                $("#disa-simulator-breakpoint").click();
             }
 
-            if (e.keyCode == 69) {
+            if (e.keyCode == 69) { // e
                $("#disa-simulator-execute").click();
             }
 
-            if (e.keyCode == 82) {
+            if (e.keyCode == 82) { // r
                $("#disa-simulator-reset").click();
             }
 
-            if (e.keyCode == 74) {
+            if (e.keyCode == 74) { // j
                $("#disa-simulator-jump").click();
             }
 
-            if (e.keyCode == 71) {
+            if (e.keyCode == 71) { // g
                $("#disa-simulator-goto").click();
             }
             
-            if (e.keyCode == 76) {
+            if (e.keyCode == 76) { // l
                $("#load-bitos-from-local").click();
             }
             
-            if (e.keyCode == 68) {
+            if (e.keyCode == 68) { // d
                $("#load-bitos-from-gdfs").click();
             }
             
-            if (e.keyCode == 87) {
+            if (e.keyCode == 87) { // w
                $("#load-bitos-from-web").click();
             }
             
-            if (e.keyCode == 90) {
+            if (e.keyCode == 90) { // z
                 $("#disa-simulator-rendertable").click();
             }
         }
