@@ -1489,16 +1489,16 @@ function FileFlags(data) {
             io.file.files[io.file.fd].status = 1;
             deferred.resolve();
         } else if (data & 0x0008) { // O_APPEND
-         	if (io.file.files[fd] === undefined) {
+         	if (io.file.files[io.file.fd] === undefined) {
                     deferred.reject();
                 }
-                io.file.files[fd].data = fileData;
-                io.file.files[fd].dataView = new DataView(io.file.files[fd].data);
-                io.file.files[fd].fp = io.file.files[fd].data.byteLength;
+                io.file.files[io.file.fd].data = fileData;
+                io.file.files[io.file.fd].dataView = new DataView(io.file.files[io.file.fd].data);
+                io.file.files[io.file.fd].fp = io.file.files[io.file.fd].data.byteLength;
                 io.file.files[io.file.fd].modified = true;
-                io.file.files[fd].write = 1;
-                io.file.files[fd].read = 1;
-                io.file.files[fd].status = 1;
+                io.file.files[io.file.fd].write = 1;
+                io.file.files[io.file.fd].read = 1;
+                io.file.files[io.file.fd].status = 1;
                 deferred.resolve();
         } else {
              function process(fileData, fd) {
