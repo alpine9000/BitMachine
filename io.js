@@ -1488,7 +1488,7 @@ function FileFlags(data) {
             io.file.files[io.file.fd].read = 1;
             io.file.files[io.file.fd].status = 1;
             deferred.resolve();
-        } else if (data & 0x0008 === 1) { // O_APPEND
+        } else if (data & 0x0008) { // O_APPEND
          	if (io.file.files[fd] === undefined) {
                     deferred.reject();
                 }
