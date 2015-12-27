@@ -1475,7 +1475,7 @@ function FileFlags(data) {
         }  else {
             fail(io.file.fd);
         }
-    } else if ((data&0xFF) === 2) { //O_RDWR
+    } else if ((data & 0x2) === 0x2) { //O_RDWR
         if (data & 0x200) { //O_CREAT
             if (io.file.files[io.file.fd] === undefined) {
                 deferred.reject();
