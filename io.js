@@ -1413,7 +1413,7 @@ function SafeGetCurrentFilename(fd)
     }
 }
 
-function FileFlags(data) {
+function FileFlagsPreAppend(data) {
     var deferred = new $.Deferred();
     //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags["+io.file.fd+"] - " + data + " " + SafeGetCurrentFilename(io.file.fd), 'color: blue', 'color: black');
     
@@ -1517,7 +1517,7 @@ function FileFlags(data) {
     return deferred;
 }
 
-function FileFlagsWithAppend(data) {
+function FileFlags(data) {
     var deferred = new $.Deferred();
     //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags["+io.file.fd+"] - " + data + " " + SafeGetCurrentFilename(io.file.fd), 'color: blue', 'color: black');
     
