@@ -1475,6 +1475,110 @@ function FileFlags(data) {
         }  else {
             fail(io.file.fd);
         }
+    } else if ((data&0xFF) === 2) { //O_RDWR
+        if (data & 0x200) { //O_CREAT
+            if (io.file.files[io.file.fd] === undefined) {
+                deferred.reject();
+            }
+            io.file.files[io.file.fd].data = new ArrayBuffer(0);
+            io.file.files[io.file.fd].dataView = new DataView(io.file.files[io.file.fd].data);
+            io.file.files[io.file.fd].fp = 0;
+            io.file.files[io.file.fd].modified = true;
+            io.file.files[io.file.fd].write = 1;
+            io.file.files[io.file.fd].read = 1;
+            io.file.files[io.file.fd].status = 1;
+            deferred.resolve();
+        } else {
+             function process(fileData, fd) {
+                if (fileData === null || fileData === undefined) {
+                    fail(fd);
+                } else {
+                    //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] success",  'color: blue', 'color: black');
+                    if (io.file.files[fd] === undefined) {
+                       deferred.reject();
+                    }
+                    io.file.files[fd].data = fileData;
+                    io.file.files[fd].dataView = new DataView(io.file.files[fd].data);
+                    io.file.files[fd].fp = 0;
+                    io.file.files[fd].modified = false;
+                    io.file.files[fd].write = 1;
+                    io.file.files[fd].read = 1;
+                    io.file.files[fd].status = 1;
+                    deferred.resolve();
+                }
+            }
+        
+            FileSystemRead(io.file.fd, io.file.files[io.file.fd].filename).done(process).fail(fail);
+        }
+    } else {
+        fail(io.file.fd);
+    }
+    
+    return deferred;
+}
+
+function FileFlagsWithAppend(data) {
+    var deferred = new $.Deferred();
+    //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags["+io.file.fd+"] - " + data + " " + SafeGetCurrentFilename(io.file.fd), 'color: blue', 'color: black');
+    
+    if (io.file.files[io.file.fd] !== undefined && io.file.files[io.file.fd].status == -1) {
+        deferred.reject();
+        return deferred;
+    }
+    
+    if (io.file.files[io.file.fd] !== undefined && io.file.files[io.file.fd].pipe !== undefined) {
+        //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags["+io.file.fd+"] - PIPE -" + data + " " + SafeGetCurrentFilename(io.file.fd), 'color: blue', 'color: black');
+        deferred.reject();
+        return deferred;
+    }
+    
+    
+    function fail(fd) {
+        //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] failed - " + SafeGetCurrentFilename() + " io.file.files[" + fd + "] = undefined;",  'color: red', 'color: black');
+        io.file.files[fd] = undefined;
+        deferred.reject();
+    }
+    
+    if (data & 0x8000) { //O_NOCTTY
+        data = (ToUnsigned(~0x8000)) & 0x8000;
+    }
+    
+    if (data === 0) { // O_RDONLY
+        function process(fileData, fd) {
+            if (fileData === null || fileData === undefined) {
+                fail(fd);
+            } else {
+                //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] success",  'color: blue', 'color: black');
+                if (io.file.files[fd] === undefined) {
+                    deferred.reject();
+                }
+                io.file.files[fd].data = fileData;
+                io.file.files[fd].dataView = new DataView(io.file.files[fd].data);
+                io.file.files[fd].fp = 0;
+                io.file.files[fd].write = 0;
+                io.file.files[fd].read = 1;
+                io.file.files[fd].status = 1;
+                deferred.resolve();
+            }
+        }
+        
+        FileSystemRead(io.file.fd, io.file.files[io.file.fd].filename).done(process).fail(fail);
+    } else if ((data & 0xFF) === 1 ) { // O_WRONLY
+        if (data & 0x200) { //O_CREAT
+            if (io.file.files[io.file.fd] === undefined) {
+                deferred.reject();
+            }
+            io.file.files[io.file.fd].data = new ArrayBuffer(0);
+            io.file.files[io.file.fd].dataView = new DataView(io.file.files[io.file.fd].data);
+            io.file.files[io.file.fd].fp = 0;
+            io.file.files[io.file.fd].modified = true;
+            io.file.files[io.file.fd].write = 1;
+            io.file.files[io.file.fd].read = 0;
+            io.file.files[io.file.fd].status = 1;
+            deferred.resolve();
+        }  else {
+            fail(io.file.fd);
+        }
     } else if ((data & 0x2) === 0x2) { //O_RDWR
         if (data & 0x200) { //O_CREAT
             if (io.file.files[io.file.fd] === undefined) {
