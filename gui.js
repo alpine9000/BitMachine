@@ -113,7 +113,7 @@ $(document).ready(function() {
         GetDisa().done(function() {
             GetGui().Ready();
             $("#disa-viewer-tab").click();
-            InitialiseBitFS("/gdrive/local.zip"); 
+            InitialiseBitFS("/gdrive/filesystem.zip"); 
         });  
 	});
 	
@@ -122,7 +122,7 @@ $(document).ready(function() {
         GetDisa().done(function() {
             GetGui().Ready();
             $("#disa-viewer-tab").click();
-            InitialiseBitFS("/web/BitFS/local.zip"); 
+            InitialiseBitFS("/web/BitFS/filesystem.zip"); 
         });  
 	});
 	
