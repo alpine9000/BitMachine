@@ -2594,7 +2594,7 @@ function InitialiseBitFS(filename)
         this.rm("/bitfs").always(function() {
             _this.mkdir("/bitfs").always(function() {
                 $(".bitos-progress").removeClass("hidden");
-                Unzip(filename, "/bitfs/usr/");        
+                Unzip(filename, "/bitfs/");        
             });
         });
     });
