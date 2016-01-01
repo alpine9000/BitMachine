@@ -2589,13 +2589,15 @@ function Unzip(filename, dest)
 
 function InitialiseBitFS(filename)
 {
-    new FileSystem().done(function() {
-        var _this = this;
-        this.rm("/bitfs").always(function() {
-            _this.mkdir("/bitfs").always(function() {
-                $(".bitos-progress").removeClass("hidden");
-                Unzip(filename, "/bitfs/");        
-            });
-        });
-    });
+    if (confirm("Initialise filesystem ?")) {
+	    new FileSystem().done(function() {
+	        var _this = this;
+	        this.rm("/bitfs").always(function() {
+	            _this.mkdir("/bitfs").always(function() {
+	                $(".bitos-progress").removeClass("hidden");
+	                Unzip(filename, "/bitfs/");        
+	            });
+	        });
+	    });
+    }
 }
