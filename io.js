@@ -2126,27 +2126,15 @@ function SetupVideoPeripheral(fb) {
 
 
 function ResetMalloc() {
-    io.malloc = { size: undefined, alloc: []};
+    io.malloc = { size: undefined, alloc: {}};
 }
 
 function MallocAdddress(address, bitLength) {
     if (bitLength === undefined) {
-        //var current = _.filter(io.malloc.alloc, function(a) {
-        var current = _.find(io.malloc.alloc, function(a) {
-             return a.address == address; 
-        });
-        //if (current.length == 0) {
-        if (current === undefined) {
-            io.malloc.alloc.push({address: address, pid: io.malloc.pid, size: io.malloc.size});
-            //console.log("[%c" + ToHex(simulator.address) + "%c] malloc(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
-        } else {
+	if (io.malloc.alloc[address] != undefined) {
             console.log("[%c" + ToHex(simulator.address) + "%c] Duplicate Address - MallocAdddress(" + io.malloc.size + ")" + " = " + ToHex(address) + " pid = " + io.malloc.pid, 'color: blue', 'color: black');
-            console.log(current);
-            //simulator.stop = true;
-            //alert("Duplicate Address")
-            MallocFreeAddress(address);
-        }
-        
+	}
+	io.malloc.alloc[address] = { address: address, pid: io.malloc.pid, size: io.malloc.size};
     } else {
         if (io.malloc.readIndex !== undefined) {
             var alloc = io.malloc.readAllocs[io.malloc.readIndex++];
@@ -2172,8 +2160,6 @@ function MallocList(pid, bitLength) {
    io.malloc.readAllocs = _.filter(io.malloc.alloc, function(a) {
        return a.pid == pid; 
    });
-  // MallocFreePid(pid);
-  //console.log("[%c" + ToHex(simulator.address) + "%c] MallocList(" + pid + ")", 'color: blue', 'color: black');
 }
     
 function MallocSize(size) {
@@ -2182,28 +2168,25 @@ function MallocSize(size) {
     
 function MallocFreeAddress(address) {
     if (address != 0) {
-        var newalloc = _.filter(io.malloc.alloc, function(a) {
-           return a.address != address; 
-        });
-        
-        if (newalloc.length == io.malloc.alloc.length) {
+	if (io.malloc.alloc[address] == undefined) {
             console.log("[%c" + ToHex(simulator.address) + "%c] MallocFree(" + ToHex(address) + ") : Free unknown", 'color: blue', 'color: black');
-        }
-        
-        io.malloc.alloc = newalloc;
-        //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreeAddress(" + ToHex(address) + ")", 'color: blue', 'color: black');
+	} else {
+	    delete io.malloc.alloc[address];
+	}
     }
 }
 
 function MallocFreePid(pid) {
-    var newalloc = _.filter(io.malloc.alloc, function(a) {
-       return a.pid != pid; 
-    });
-    if (newalloc.length != io.malloc.alloc.length) {
-        console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ") : Found zombie " + newalloc.length + " - " +  io.malloc.alloc.length, 'color: blue', 'color: black');
+    var keys = Object.keys(io.malloc.alloc);
+    for (var i in keys) {
+	if (io.malloc.alloc[keys[i]].pid == pid) {
+	    delete io.malloc.alloc[keys[i]];
+	}
     }
-    io.malloc.alloc = newalloc;
-    //console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ")", 'color: blue', 'color: black');
+
+    if (Object.keys(io.malloc.alloc).length != keys.length) {
+	console.log("[%c" + ToHex(simulator.address) + "%c] MallocFreePid(" + pid + ") : Found zombie " + keys.length + " - " +  io.malloc.alloc.length, 'color: blue', 'color: black');
+    }
 }
 
 

@@ -285,6 +285,11 @@ Elf32.prototype.Load = function(targetAddress)
     for (var i = 0; i < this.image.byteLength; i+=4) {
         cpu.Write32(targetAddress+i, view.getUint32(i, false));
     }
+
+    //for (var i = 0; i < this.image.byteLength; i+=2) {
+    //   cpu.ExecWrite16(targetAddress+i, view.getUint16(i, false));
+    //}
+    
     if (checking) {
         kernel.CheckRam(1);
     }
