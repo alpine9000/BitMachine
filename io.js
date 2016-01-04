@@ -2472,7 +2472,7 @@ function SetupPeripheral() {
     
     io.peripheral.push(PCGText);
     
-    io.peripheral.push(FileReadAddress);
+    io.peripheral.push(FileReadLength);
 
     io.peripheral.push(FileDoRead);
 }
