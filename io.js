@@ -1719,7 +1719,7 @@ function FileDoRead() {
     return i;
 }
 
-function FileWriteAddress(address) {
+function FileAddress(address) {
     var file = io.file.files[io.file.fd];
     if (file === undefined) {
         return;
@@ -2386,10 +2386,12 @@ function SetupPeripheral() {
     
     io.peripheral.push(FileStatus);
     
-    io.peripheral.push(FileRead);
+    io.peripheral.push(FileAddress);
     
-    io.peripheral.push(FileWriteAddress);
-    
+    io.peripheral.push(FileReadLength);
+
+    io.peripheral.push(FileDoRead);
+
     io.peripheral.push(FileWriteLength);
     
     io.peripheral.push(FileClose);
@@ -2472,9 +2474,6 @@ function SetupPeripheral() {
     
     io.peripheral.push(PCGText);
     
-    io.peripheral.push(FileReadLength);
-
-    io.peripheral.push(FileDoRead);
 }
 
 SetupPeripheral();
