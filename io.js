@@ -1738,14 +1738,14 @@ function FileWriteLength(length) {
             file.pipe.push(cpu.Read8(io.file.files[io.file.fd].address+i));
         }
     } else {
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileWrite["+io.file.fd+"] - " + file.filename + " " + length, 'color: blue', 'color: black');
         if (file.fp+length > file.data.byteLength) {
             var data = new ArrayBuffer(file.fp+length);
             var newDataVew =  new DataView(data);
             var l = file.data.byteLength;
-            for (var i=0;i<l;i++){
+            /*for (var i=0;i<l;i++){
                newDataVew.setUint8(i, file.dataView.getUint8(i));
-            }  
+	       } */
+	    (new Uint8Array(data, 0, file.fp.length)).set(new Uint8Array(file.data, 0, file.data.byteLength)); 
             file.data = data;
             file.dataView = new DataView(file.data);
         }
