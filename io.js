@@ -1694,6 +1694,31 @@ function FileRead() {
     }
 }
 
+function FileReadLength(length) {
+    var file = io.file.files[io.file.fd];
+    if (file === undefined) {
+        return;
+    }
+    io.file.files[io.file.fd].readLength = length;
+}
+
+function FileDoRead() {
+    var i;
+    for (i = 0; i < io.file.files[io.file.fd].readLength; ++i) {
+	var val = FileRead();
+	if (val == -2) { // Blocked pipe
+	    return val;
+	}
+	if (val >= 0) {
+	    cpu.Write8(io.file.files[io.file.fd].address+i, val);
+	} else {
+	    break;
+	}
+    }
+
+    return i;
+}
+
 function FileWriteAddress(address) {
     var file = io.file.files[io.file.fd];
     if (file === undefined) {
@@ -2447,6 +2472,9 @@ function SetupPeripheral() {
     
     io.peripheral.push(PCGText);
     
+    io.peripheral.push(FileReadAddress);
+
+    io.peripheral.push(FileDoRead);
 }
 
 SetupPeripheral();
