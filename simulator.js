@@ -270,7 +270,7 @@ simulator.Reset = function() {
     
     simulator.delayedBranch = undefined;
     simulator.ram = new Uint32Array(cpu.ramSize>>>2);
-    //cpu.ramUint16Array = new Uint16Array(cpu.ramSize>>>1);
+    cpu.ramUint16Array = new Uint16Array(cpu.ramSize>>>1);
     simulator.uninitialisedRam = [];
     simulator.sideEffects = "";
     ResetFile();
@@ -401,8 +401,8 @@ simulator.FastStep = function() {
     if (s.address < cpu.romSize) {
         s.instruction = s.instructionCache[cpu.uint16Array[s.address>>>1]];
     } else {
-        s.instruction = s.instructionCache[cpu.ReadRam16(s.address)];
-	//s.instruction = s.instructionCache[cpu.ramUint16Array[(s.address- cpu.ramStart)>>>1]];
+        //s.instruction = s.instructionCache[cpu.ReadRam16(s.address)];
+	s.instruction = s.instructionCache[cpu.ramUint16Array[(s.address- cpu.ramStart)>>>1]];
     }
     
     // Fastest, but prevents executing from ram :(
