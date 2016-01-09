@@ -257,7 +257,7 @@ var kernel = {
     {
         for (var i = 0; i < kernel.threadMax; i++) {
             var state = kernel.Read(i, 1) ;
-            if (/*kernel.Read(i, 0) == pid &&*/ state != 0) {
+            if (state != 0) {
                  var argv = [];
                 for (var c = 0; kernel.ReadRam32(kernel.Read(i, 7)+(c*4)) != 0; c++) {
                     if (address == (kernel.Read(i, 7)+(c*4))) {
@@ -468,12 +468,10 @@ function FileSystemRead(fd, filename)
         filename = "/" + filename;
     }
     
-    //if (filename.indexOf(io.file.localMount) === 0) {
     var fstype = FilesystemGetType(filename);
     var remoteFilename = FilesystemGetRemoteName(filename);
     if (fstype === "local") {
         var fs = new FileSystem().done(function() {
-            //var localFilename = filename.replace(io.file.localMount, io.file.localMountPoint);
             this.read(remoteFilename, false).done(function(fileData) {
                    deferred.resolve(fileData, fd);
                }).fail(function() {
@@ -528,7 +526,6 @@ function FileSystemStat(sd)
 {
 
     var filename = io.file.stat[sd].filename;
-    //console.log("[%c" + ToHex(simulator.address) + "%c] FileSystemStat["+sd+"] - " + filename, 'color: blue', 'color: black');
     
     function checksum(s)
     {
@@ -562,7 +559,7 @@ function FileSystemStat(sd)
                     
                     if (file.isDirectory) {
                         cpu.Write32(io.file.stat[sd].struct+4, 040644 ); // st_mode
-                    } else {//if (file.isFile) {
+                    } else {
                         cpu.Write32(io.file.stat[sd].struct+4, 0100644 ); // st_mode
                     }
                     
@@ -624,38 +621,29 @@ function FileSystemOpendir(filename)
        filename = "/" + filename;
     }
  
-    //console.log("[%c" + ToHex(simulator.address) + "%c] FileSystemOpendir - " + filename , 'color: blue', 'color: black');
-    
     io.file.dirs[dp] = {status: 0, filename: filename};
     
     var fstype = FilesystemGetType(filename);
     var remoteFilename = FilesystemGetRemoteName(filename);
-    //if (filename.indexOf(io.file.localMount) === 0) {
     if (fstype === "local") {
-        //var localFilename = filename.replace(io.file.localMount, io.file.localMountPoint);
         var localFilename = remoteFilename;
         var fs = new FileSystem().done(function(o) {
             this.list(localFilename).done(function(results) {
                io.file.dirs[dp].entries = results;
                io.file.dirs[dp].status = 1;
                io.file.dirs[dp].index = 0;
-               //console.log("[%c" + ToHex(simulator.address) + "%c] FileSystemOpendir - " + io.file.dirs[dp].entries , 'color: blue', 'color: black');
             }).fail(function() {
                 io.file.dirs[dp].status = -1;
             });
         });        
     } else {
         var gdfs = new GDFileSystem().done(function(o) {
-            //this.stat("/BitFS"+filename).done(function(file) {
             this.stat(remoteFilename).done(function(file) {
                 if (file.mimeType == "application/vnd.google-apps.folder") {
-                    //io.file.dirs[dp].status = 1;
-                    //this.list("/BitFS"+filename).done(function(results) {
                     this.list(remoteFilename).done(function(results) {
                        io.file.dirs[dp].entries = results;
                        io.file.dirs[dp].status = 1;
                        io.file.dirs[dp].index = 0;
-                       //console.log("[%c" + ToHex(simulator.address) + "%c] FileSystemOpendir - " + io.file.dirs[dp].entries , 'color: blue', 'color: black');
                     }).fail(function() {
                         io.file.dirs[dp].status = -1;
                     });
@@ -770,7 +758,7 @@ function AudioSetBufferLength(length) {
     a.context.decodeAudioData(cpu.DMARead(channel.address, channel.address + channel.length), function(buffer) {
         channel.buffer = buffer;
     }, function() {
-        //console.log("[%c" + ToHex(simulator.address) + "%c]  ", 'color: blue', 'color: black');
+
     });
 }
 
@@ -829,8 +817,6 @@ function CreateFrameBuffer(index, w, h) {
         ctx.fillStyle = "#000";
     }
     
-    //ctx.scale(2,2);
-
     imageData = ctx.createImageData(w, h);
     
     var fb = {
@@ -876,11 +862,8 @@ function CreateFrameBuffer(index, w, h) {
 
 function ResetVideo() {
     io.video.scaling = 1.0 * io.devicePixelRatio;
-    //var w = 640, h = 480;
     var w = 1140, h = 768;
-    //for (var i = 0; i < 4; i++) {
     io.video.frameBuffer[0] = CreateFrameBuffer(0, w, h);
-    //}
 }
 
 function ResetFile() {
@@ -890,10 +873,10 @@ function ResetFile() {
     
     io.file = {
         fd: undefined,
-        files: [],
+        files: {},
         dp: undefined,
         dirs: {},
-        stat: [],
+        stat: {},
         statSD: undefined,
         mkdirs: [],
         fstab: [ 
@@ -1001,7 +984,6 @@ function VideoPixel(fb, data) {
         video.ctx.fillStyle = "rgba(" + ((video.color & 0xFF0000) >>> 16) + "," +
             ((video.color & 0xFF00) >>> 8) + "," +
             (video.color & 0xFF) + "," +
-            //"1.0)";
             (((video.color & 0xFF000000) >>> 24))/255.0 + ")";
     }
 
@@ -1010,8 +992,7 @@ function VideoPixel(fb, data) {
 
 function VideoData(fb, data) {
     var video = io.video.frameBuffer[fb];
-    var pixelArray = video.imageData.data;//(data >>> 8) | ((data & 0xFF)<<24);
-    
+    var pixelArray = video.imageData.data;    
     var index = ((video.y * video.w) + video.x) * 4;
     pixelArray[index++] = (data & 0xFF000000) >>> 24;
     pixelArray[index++] = (data & 0xFF0000) >>> 16;
@@ -1027,13 +1008,6 @@ function VideoSaveData(fb, data) {
     if (io.devicePixelRatio != 1) {
         ctx.drawImage(ctx.canvas, 0, 0, io.devicePixelRatio*ctx.canvas.width, io.devicePixelRatio*ctx.canvas.height);
     }
-    /*var pixelData = imageData.data;
-    for (var i = 0; i < pixelData.length; i+=4) {
-        pixelData[i] = 0;
-        pixelData[i+1] = 0;
-        pixelData[i+2] = 0;
-        pixelData[i+3] = 0xFF;
-    }*/
 }
 
 function VideoLoadData(fb, data) {
@@ -1052,9 +1026,7 @@ function VideoRect(fb, data) {
         video.ctx.fillStyle = "rgba(" + ((video.color & 0xFF0000) >>> 16) + "," +
             ((video.color & 0xFF00) >>> 8) + "," +
             (video.color & 0xFF) + "," +
-            //((video.color & 0xFF000000) >>> 24) + ")";
             (((video.color & 0xFF000000) >>> 24))/255.0 + ")";
-            //"1.0)";
     }
 
     video.ctx.fillRect(video.x * scaling, video.y * scaling, video.width * scaling, video.height * scaling);
@@ -1228,14 +1200,12 @@ function DirOpenDir (data, bitLength) {
     
 function DirReadDir(data, bitLength) {
     if (bitLength !== undefined) { //Read
-        //console.log("[%c" + ToHex(simulator.address) + "%c] DirReadDir - Read" + io.file.dp , 'color: blue', 'color: black');
         if (io.file.dp !== undefined) {
             var dirent = io.file.dirs[io.file.dp];
             if (dirent !== undefined) {
               if (dirent.entries !== undefined && dirent.index < dirent.entries.length) {
                   if (dirent.entries[dirent.index] != undefined) {
                       var name = dirent.entries[dirent.index++].title;
-                      //console.log("[%c" + ToHex(simulator.address) + "%c] DirReadDir - " + name , 'color: blue', 'color: black');
                       for (var i = 0; i < name.length; i++) {
                           cpu.Write8(io.file.dp+i, name[i].charCodeAt(0));
                       }
@@ -1247,7 +1217,6 @@ function DirReadDir(data, bitLength) {
         }
         return -1;
     } else {
-        //console.log("[%c" + ToHex(simulator.address) + "%c] DirReadDir - Write" + data , 'color: blue', 'color: black');
          io.file.dp = data;
     }
     
@@ -1284,12 +1253,10 @@ function DirMakeDir(data, bitLength) {
         if (pathname[0] !== "/") {
             pathname = "/" + pathname;
         }
-        //if (pathname.indexOf(io.file.localMount) === 0) {
         if (FilesystemGetType(pathname) === "local") {
             if (io.file.mkdirs[pathname] === undefined) {
                 io.file.mkdirs[pathname] = 1;
                 var fs = new FileSystem().done(function() {
-                 //this.mkdir(pathname.replace(io.file.localMount, io.file.localMountPoint)).done(function() {
                  this.mkdir(FilesystemGetRemoteName(pathname)).done(function() {
                        io.file.mkdirs[pathname] = 0;
                     }).fail(function() {
@@ -1318,8 +1285,6 @@ function FileOpen(data, filename) {
     var c = [];
     _.each(filename.split("/"), function(b) { if (b == "..") { c.pop();} else { c.push(b);}});
     filename = c.join("/");
-    
-    //console.log("[%c" + ToHex(simulator.address) + "%c] FileOpen["+io.file.fd+"] - " + filename, 'color: blue', 'color: black');
     
     if (filename == "/dev/pipe") {
         io.file.files[io.file.fd] = {status : 1, filename: filename, pipe : []};
@@ -1357,7 +1322,11 @@ function FileStatPath(data) {
 }
 
 function FileStatStatus(date) {
-    return io.file.stat[io.file.statSD].status;
+    var status = io.file.stat[io.file.statSD].status;
+    if (status == 0 || status == -1) {
+        delete io.file.stat[io.file.statSD];
+    }
+    return status;
 }
 
 function FileStat(data, bitLength) {
@@ -1368,39 +1337,7 @@ function FileStat(data, bitLength) {
          io.file.stat[i] = {status: -2};
          io.file.statSD = i;
          return i;
-    }
-    /*if (bitLength === undefined) { //Write
-        var filename = "";
-        var c;
-        for (var address = data; c !== 0; address++) {
-            c = cpu.Read8(address);
-            if (c !== 0) {
-                filename += String.fromCharCode(c);
-            }
-        }
-        
-         
-        if (filename[0] !== "/") {
-            filename = "/" + filename;
-        }
-        
-        var c = [];
-        _.each(filename.split("/"), function(b) { if (b == "..") { c.pop();} else { c.push(b);}});
-        filename = c.join("/");
-        
-        io.file.statFilename = filename;
-        if (io.file.stat[filename] === undefined) {
-            io.file.stat[filename] = {status: -2};
-            FileSystemStat(filename);
-        }
-    } else {
-        var status =  io.file.stat[io.file.statFilename].status;
-        if (status == 0) {
-            io.file.stat[io.file.statFilename] = undefined;
-        } 
-        return status;
-    }*/
-    
+    }    
 }
 
 function SafeGetCurrentFilename(fd)
@@ -1415,7 +1352,6 @@ function SafeGetCurrentFilename(fd)
 
 function FileFlagsPreAppend(data) {
     var deferred = new $.Deferred();
-    //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags["+io.file.fd+"] - " + data + " " + SafeGetCurrentFilename(io.file.fd), 'color: blue', 'color: black');
     
     if (io.file.files[io.file.fd] !== undefined && io.file.files[io.file.fd].status == -1) {
         deferred.reject();
@@ -1423,15 +1359,13 @@ function FileFlagsPreAppend(data) {
     }
     
     if (io.file.files[io.file.fd] !== undefined && io.file.files[io.file.fd].pipe !== undefined) {
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags["+io.file.fd+"] - PIPE -" + data + " " + SafeGetCurrentFilename(io.file.fd), 'color: blue', 'color: black');
         deferred.reject();
         return deferred;
     }
     
     
     function fail(fd) {
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] failed - " + SafeGetCurrentFilename() + " io.file.files[" + fd + "] = undefined;",  'color: red', 'color: black');
-        io.file.files[fd] = undefined;
+        delete io.file.files[fd];
         deferred.reject();
     }
     
@@ -1444,7 +1378,6 @@ function FileFlagsPreAppend(data) {
             if (fileData === null || fileData === undefined) {
                 fail(fd);
             } else {
-                //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] success",  'color: blue', 'color: black');
                 if (io.file.files[fd] === undefined) {
                     deferred.reject();
                 }
@@ -1493,7 +1426,6 @@ function FileFlagsPreAppend(data) {
                 if (fileData === null || fileData === undefined) {
                     fail(fd);
                 } else {
-                    //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] success",  'color: blue', 'color: black');
                     if (io.file.files[fd] === undefined) {
                        deferred.reject();
                     }
@@ -1519,7 +1451,6 @@ function FileFlagsPreAppend(data) {
 
 function FileFlags(data) {
     var deferred = new $.Deferred();
-    //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags["+io.file.fd+"] - " + data + " " + SafeGetCurrentFilename(io.file.fd), 'color: blue', 'color: black');
     
     if (io.file.files[io.file.fd] !== undefined && io.file.files[io.file.fd].status == -1) {
         deferred.reject();
@@ -1527,15 +1458,13 @@ function FileFlags(data) {
     }
     
     if (io.file.files[io.file.fd] !== undefined && io.file.files[io.file.fd].pipe !== undefined) {
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags["+io.file.fd+"] - PIPE -" + data + " " + SafeGetCurrentFilename(io.file.fd), 'color: blue', 'color: black');
         deferred.reject();
         return deferred;
     }
     
     
     function fail(fd) {
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] failed - " + SafeGetCurrentFilename() + " io.file.files[" + fd + "] = undefined;",  'color: red', 'color: black');
-        io.file.files[fd] = undefined;
+        delete io.file.files[fd];
         deferred.reject();
     }
     
@@ -1548,7 +1477,6 @@ function FileFlags(data) {
             if (fileData === null || fileData === undefined) {
                 fail(fd);
             } else {
-                //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] success",  'color: blue', 'color: black');
                 if (io.file.files[fd] === undefined) {
                     deferred.reject();
                 }
@@ -1617,7 +1545,6 @@ function FileFlags(data) {
                 if (fileData === null || fileData === undefined) {
                     fail(fd);
                 } else {
-                    //console.log("[%c" + ToHex(simulator.address) + "%c] FileFlags[" + fd + "] success",  'color: blue', 'color: black');
                     if (io.file.files[fd] === undefined) {
                        deferred.reject();
                     }
@@ -1645,7 +1572,6 @@ var fileFD = 5;
 
 function FileFD(data, allocate) {
     if (typeof(allocate) !== "undefined") {
-        //for (var i = 5; io.file.files[i] !== undefined; i++);
         var i = fileFD++;   
         io.file.files[i] = "pending";
         return i;    
@@ -1673,8 +1599,7 @@ function FileRead() {
         if (file.pipe.length > 0) {
             return file.pipe.shift()>>>0;
         } else if (file.pipe.length == 0 && file.pipe.closed == true) { // Pipe closed, and empty
-            //console.log("[%c" + ToHex(simulator.address) + "%c] FileRead["+io.file.fd+"] - Closed pipe " + file.filename + " io.file.files[" + io.file.fd + "] = undefined", 'color: red', 'color: black');
-            io.file.files[io.file.fd] = undefined;
+            delete io.file.files[io.file.fd];
             return -1;
         } else {
             return -2; // Pipe blocked;
@@ -1683,10 +1608,8 @@ function FileRead() {
         var fp = file.fp;
         
         if (fp >= file.data.byteLength) {
-            //console.log("[%c" + ToHex(simulator.address) + "%c] FileRead["+io.file.fd+"] - EOF " + file.filename, 'color: blue', 'color: black');
             return -1;
         } else {
-            //console.log("[%c" + ToHex(simulator.address) + "%c] FileRead["+io.file.fd+"] - " + file.filename, 'color: blue', 'color: black');
             var c = file.dataView.getUint8(fp++);
             io.file.files[io.file.fd].fp = fp;
             return c>>>0;
@@ -1742,9 +1665,6 @@ function FileWriteLength(length) {
             var data = new ArrayBuffer(file.fp+length);
             var newDataVew =  new DataView(data);
             var l = file.data.byteLength;
-            /*for (var i=0;i<l;i++){
-               newDataVew.setUint8(i, file.dataView.getUint8(i));
-	       } */
 	    (new Uint8Array(data, 0, file.fp.length)).set(new Uint8Array(file.data, 0, file.data.byteLength)); 
             file.data = data;
             file.dataView = new DataView(file.data);
@@ -1782,7 +1702,6 @@ function FileSeek(pos) {
         file.fp = file.data.byteLength - pos;
     }
     
-    //console.log("[%c" + ToHex(simulator.address) + "%c] FileSeek["+io.file.fd+"] - SEEK_SET" + file.filename + " " + file.fp, 'color: blue', 'color: black');
 }
 
 function FilePosition() {
@@ -1799,15 +1718,13 @@ function FileCloseStatus(data)
     var file = io.file.files[io.file.fd];
     
     if (file !== undefined) {
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileCloseStatus["+io.file.fd+"] - " + file.closeStatus, 'color: blue', 'color: black');
 
         if (file.pipe !== undefined) {
             return 1;
         } else {
             var status = file.closeStatus;
             if (status === 0) {
-               //console.log("[%c" + ToHex(simulator.address) + "%c] FileCloseStatus["+io.file.fd+"] - " + file.closeStatus + " io.file.files[" + io.file.fd + "] = undefined", 'color: red', 'color: black');
-               io.file.files[io.file.fd] = undefined;
+		delete io.file.files[io.file.fd];
             }
             return status;
         }
@@ -1816,7 +1733,6 @@ function FileCloseStatus(data)
         if (io.file.fd === 0 || io.file.fd === 1 || io.file.fd === 2) { //stdin, stdout, stderr
             return 0;
         }
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileCloseStatus["+io.file.fd+"] - Already closed?", 'color: blue', 'color: black');
         return 0;
     }
 }
@@ -1825,23 +1741,18 @@ function FileClose() {
     var file = io.file.files[io.file.fd];
     
     if (file !== undefined) {
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileClose["+io.file.fd+"] - " + file.filename, 'color: blue', 'color: black');
         if (file.modified) {
             var filename = file.filename;
             if (filename[0] !== "/") {
                 filename = "/" + filename;
             }
             var remoteFilename = FilesystemGetRemoteName(filename);
-            //if (filename.indexOf(io.file.localMount) === 0) {
             if (FilesystemGetType(filename) == "local") {
                 file.closeStatus = 1; //Pending
                 var fs = new FileSystem().done(function() {
-                // this.save(filename.replace(io.file.localMount, io.file.localMountPoint), file.data).done(function() {
                  this.save(remoteFilename, file.data).done(function() {
-                       //console.log("[%c" + ToHex(simulator.address) + "%c] FileClosed["+io.file.fd+"]  - " + file.filename + " Saved..." + file.data.byteLength, 'color: blue', 'color: black');
                        file.closeStatus = 0; //Closed
                     }).fail(function() {
-                       //console.log("[%c" + ToHex(simulator.address) + "%c] FileClosed["+io.file.fd+"] FAILED  - " + file.filename + " Saved...", 'color: blue', 'color: black');
                        file.closeStatus = -1; //Closed
                     });
                 });
@@ -1853,10 +1764,8 @@ function FileClose() {
                     } else {
                         file.closeStatus = 1; //Pending
                         this.save(remoteFilename, file.data).done(function() {
-                           //console.log("[%c" + ToHex(simulator.address) + "%c] FileClosed["+io.file.fd+"]  - " + file.filename + " Saved...", 'color: blue', 'color: black');
                            file.closeStatus = 0; //Closed
                         }).fail(function() {
-                          //console.log("[%c" + ToHex(simulator.address) + "%c] FileClosed["+io.file.fd+"] FAILED - " + file.filename + " Saved...", 'color: blue', 'color: black');
                            file.closeStatus = 0; //Closed
                         });
                     }
@@ -1869,17 +1778,8 @@ function FileClose() {
         if (file.pipe !== undefined && file.pipe.closed === undefined) {
             file.pipe.closed = true;
         }
-        /*
-        if (file.pipe !== undefined && file.pipe.closed === undefined) {
-            file.pipe.closed = true;
-        } else {
-            io.file.files[io.file.fd] = undefined;
-        }*/
         return 0;
     } else {
-        
-        //console.log("[%c" + ToHex(simulator.address) + "%c] FileClose - fd " + io.file.fd + " does not exist  ", 'color: blue', 'color: black');
-        
         return -1;
     }
 }
@@ -1939,7 +1839,6 @@ function ElfKernelLoad(fd) {
 }
 
 function FileElfLoad(fd) {
-    //console.log("FileElfLoad: " + io.file.fd);
     var file = io.file.files[io.file.fd];
     if (file === undefined || file.status != 1) {
         return 0;
@@ -1949,9 +1848,7 @@ function FileElfLoad(fd) {
 }
 
 function FileElfRelocate(address)
-{
-    //console.log("FileElfRelocate: " + io.file.fd + " -> " + address );
-    
+{    
     var file = io.file.files[io.file.fd];
     if (file === undefined || file.status != 1 || file.elf === undefined) {
         return 0;
@@ -1966,9 +1863,6 @@ function FileElfRelocate(address)
 }
 
 function FileElfSize() {
-    
-    //console.log("FileElfSize: " + io.file.fd);
-    
     var file = io.file.files[io.file.fd];
     if (file === undefined || file.status != 1 || file.elf === undefined) {
         return 0;
@@ -1977,9 +1871,6 @@ function FileElfSize() {
     }
 }
 function FileElfEntry() {
-    
-    //console.log("FileElfEntry: " + io.file.fd);
-    
     var file = io.file.files[io.file.fd];
     if (file === undefined || file.status != 1 || file.elf === undefined) {
         return 0;
@@ -2015,15 +1906,8 @@ function RenameNew(data)
     var rename = io.rename.renames[index];
     rename.newFilename = filename;
     
-    //console.log("[%c" + ToHex(simulator.address) + "%c] Rename - " + rename.oldFilename + " -> " + rename.newFilename, 'color: blue', 'color: black');
-    
-    
-    if (FilesystemGetType(rename.newFilename) == "local" && FilesystemGetType(rename.oldFilename) == "local") {
-    //if (rename.newFilename.indexOf(io.file.localMount) === 0 && rename.oldFilename.indexOf(io.file.localMount) === 0) {
-        
+    if (FilesystemGetType(rename.newFilename) == "local" && FilesystemGetType(rename.oldFilename) == "local") {        
         var fs = new FileSystem().done(function() {
-            //var src = rename.oldFilename.replace(io.file.localMount, io.file.localMountPoint);
-            //var dest = rename.newFilename.replace(io.file.localMount, io.file.localMountPoint);
             var src = FilesystemGetRemoteName(rename.oldFilename);
             var dest = FilesystemGetRemoteName(rename.newFilename);
             this.rename(src, dest).done(function(fileData) {
@@ -2040,7 +1924,6 @@ function RenameNew(data)
 
 function RenameStatus(data)
 {
-    //console.log("[%c" + ToHex(simulator.address) + "%c] RenameStatus - " + io.rename.renames[io.rename.index].status, 'color: blue', 'color: black');
     // 1 waiting
     // 0 success
     // -1 fail
@@ -2072,19 +1955,9 @@ function UnlinkPath(data)
     unlink.path = filename;
     unlink.status = 1;
     
-    //console.log("[%c" + ToHex(simulator.address) + "%c] Rename - " + rename.oldFilename + " -> " + rename.newFilename, 'color: blue', 'color: black');
-    
-    
     if (FilesystemGetType(unlink.path) === "local") {
-    //if (unlink.path.indexOf(io.file.localMount) === 0 ) {
-        
         var fs = new FileSystem().done(function() {
-            //var path = unlink.path.replace(io.file.localMount, io.file.localMountPoint);
             var path = FilesystemGetRemoteName(unlink.path);
-            //console.log("UnlinkPath: FIleSystem ready")
-            //console.log(unlink)
-            //console.log(this)
-            //console.log(fs)
             this.rm(path).done(function(fileData) {
                    unlink.status = 0;
                }).fail(function() {
@@ -2099,7 +1972,6 @@ function UnlinkPath(data)
 
 function UnlinkStatus(data)
 {
-    //console.log("[%c" + ToHex(simulator.address) + "%c] RenameStatus - " + io.rename.renames[io.rename.index].status, 'color: blue', 'color: black');
     // 1 waiting
     // 0 success
     // -1 fail
@@ -2261,7 +2133,6 @@ function PCGColor(data)
         video.ctx.fillStyle = "rgba(" + ((video.color & 0xFF0000) >>> 16) + "," +
             ((video.color & 0xFF00) >>> 8) + "," +
             (video.color & 0xFF) + "," +
-            //"1.0)";
             (((video.color & 0xFF000000) >>> 24))/255.0 + ")";
     }
 }
@@ -2508,7 +2379,6 @@ function Unzip(filename, dest)
            if (element.directory) {
                 var dirname = BuildPath(element);
                 if (dirname != "") {
-                    //console.log("mkdir " +  dest + dirname);
                     localFS.mkdir( dest + BuildPath(element)).done(function() {
                         deferred.resolve(index+1);
                     });
@@ -2517,7 +2387,6 @@ function Unzip(filename, dest)
                 element.getBlob("", function(x) { 
                     var fileReader = new FileReader();
                     fileReader.onload = function() {
-                        //console.log("extract " + dest + BuildPath(element));
                         localFS.save( dest + BuildPath(element), this.result).done(function() {
                             deferred.resolve(index+1);    
                         })
@@ -2576,14 +2445,6 @@ function Unzip(filename, dest)
             console.log("failed to unzip");
         }
         require(["external/zip/zip.min.js"], function() {
-            /*var fs = new GDFileSystem().done(function() {
-                this.read(gfilename,false).done(function(data) {
-                    _this.zipper = new zip.fs.FS();
-                    zip.workerScriptsPath = "external/zip/";
-                    _this.zipper.importBlob(new Blob([data]), function () { ZipLoaded() }, function () { ZipError() });
-                })
-                
-            })*/
             var fd = FileFD(0, 1);
             FileOpen(0, filename);
             FileFlags(0).done(function() {
