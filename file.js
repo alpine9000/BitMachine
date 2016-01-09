@@ -128,20 +128,19 @@ FileSystem.prototype.mkdir = function (path) {
     return deferred.promise();
 };
 
-
-FileSystem.prototype.read = function (path, text) {
+FileSystem.prototype._read = function (path, text) {
     GetGui().PushFileSystemOperation("local");
     var deferred = $.Deferred();
 
-    
+
     var _this = this;
-    _this.filer.open(path, function(file) {        
+    _this.filer.open(path, function (file) {
         var reader = new FileReader();
-        reader.onload = function (e) {            
-            deferred.resolveWith(this, [e.target.result]);           
+        reader.onload = function (e) {
+            deferred.resolveWith(this, [e.target.result]);
             GetGui().PopFileSystemOperation("local");
         };
-        reader.onerror = function(e) {
+        reader.onerror = function (e) {
             GetGui().PopFileSystemOperation("local");
         };
         if (text) {
@@ -149,10 +148,45 @@ FileSystem.prototype.read = function (path, text) {
         } else {
             reader.readAsArrayBuffer(file);
         }
-    }, function(e) {
+    }, function (e) {
         deferred.rejectWith(this, [e]);
         GetGui().PopFileSystemOperation("local");
     });
+
+    return deferred.promise();
+};
+
+
+FileSystem.prototype.read = function (path, text) {  
+    var deferred = $.Deferred();    
+    var _this = this;
+
+    function success(fileData) {
+       	if (fileData.byteLength == 64) {
+	    var dv = new DataView(fileData);
+	    if (String.fromCharCode(dv.getUint8(0)) == "#" &&
+		String.fromCharCode(dv.getUint8(1)) == "!" &&
+		String.fromCharCode(dv.getUint8(2)) == "!" &&
+		String.fromCharCode(dv.getUint8(3)) == "#") {
+		path = String.fromCharCode.apply(null, new Uint8Array(fileData)).slice(4).trim();            
+		doread();
+	    } else {
+		deferred.resolveWith(this, [fileData]);	    
+	    }
+	} else {
+	    deferred.resolveWith(this, [fileData]);	    
+	}
+    } 
+
+    function doread() {
+        _this._read(path, text).done(function (fileData) {
+            success(fileData);
+        }).fail(function (e) {
+            deferred.rejectWith(this, [e]);
+        });
+    }
+
+    doread();
 
     return deferred.promise();
 };
