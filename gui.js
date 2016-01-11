@@ -131,19 +131,25 @@ $(document).ready(function() {
 	$("#load-bitos-from-local").on("click", function(e) {
         e.preventDefault();
         //$("body").addClass("bitos");
-        BootSimulator("/usr/local/src/BitOS/bin/bitos.elf"); 
+        BootSimulator("/usr/local/src/BitOS/bin/bitos.elf", "kernel"); 
 	});
 	
 	$("#load-bitos-from-gdfs").on("click", function(e) {
         e.preventDefault();
         //$("body").addClass("bitos");
-        BootSimulator("/gdrive/bin/bitos.elf"); 
+        BootSimulator("/gdrive/bin/bitos.elf", "kernel"); 
 	});
 	
 	$("#load-bitos-from-web").on("click", function(e) {
         e.preventDefault();
         //$("body").addClass("bitos");
-        BootSimulator("/web/BitFS/bitos.elf"); 
+        BootSimulator("/web/BitFS/bitos.elf", "kernel"); 
+	});
+
+	$("#load-bitos-from-web-torture").on("click", function(e) {
+        e.preventDefault();
+        //$("body").addClass("bitos");
+        BootSimulator("/web/BitFS/bitos.elf", "kernel test"); 
 	});
 	
 	

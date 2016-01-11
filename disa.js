@@ -13,10 +13,10 @@ function GetDisa() {
 }
 
 
-function BootSimulator(filename) {
+function BootSimulator(filename, cmd) {
     GetDisa().done(function() {
-       ElfKernelLoadFromFile(filename); 
-    });
+	    ElfKernelLoadFromFile(filename, cmd); 
+	});
 }
 
 

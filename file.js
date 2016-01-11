@@ -162,7 +162,7 @@ FileSystem.prototype.read = function (path, text) {
     var _this = this;
 
     function success(fileData) {
-       	if (fileData.byteLength == 64) {
+	/*       	if (fileData.byteLength == 64) {
 	    var dv = new DataView(fileData);
 	    if (String.fromCharCode(dv.getUint8(0)) == "#" &&
 		String.fromCharCode(dv.getUint8(1)) == "!" &&
@@ -175,7 +175,8 @@ FileSystem.prototype.read = function (path, text) {
 	    }
 	} else {
 	    deferred.resolveWith(this, [fileData]);	    
-	}
+	    }*/
+	deferred.resolveWith(this, [fileData]);	    
     } 
 
     function doread() {
