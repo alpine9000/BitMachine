@@ -16,10 +16,12 @@ var kernel = {
         this.currentThreadAddress = this.GetElfSymbol("_currentThread").st_value;
         this.stack = {};
        
-        simulator.instructionProcessors[107] = this.instruction1011dddddddddddd;
-	simulator.instructionProcessors[108] = this.instruction0000mmmm00000011;
-        simulator.instructionProcessors[110] = this.instruction0100mmmm00001011;
-        simulator.instructionProcessors[111] = this.instruction0000000000001011;
+	if (1) {
+	    simulator.instructionProcessors[107] = this.instruction1011dddddddddddd;
+	    simulator.instructionProcessors[108] = this.instruction0000mmmm00000011;
+	    simulator.instructionProcessors[110] = this.instruction0100mmmm00001011;
+	    simulator.instructionProcessors[111] = this.instruction0000000000001011;
+	}
         
         this.save = {};
         this.save.ReadRam32 = cpu.ReadRam32;
@@ -28,7 +30,11 @@ var kernel = {
         this.save.WriteRam32 = cpu.WriteRam32; 
         this.save.WriteRam16 = cpu.WriteRam16; 
         this.save.WriteRam8 = cpu.WriteRam8; 
-        
+	this.save.SetR = cpu.SetR;
+
+	this.GetThreadStackInfo();
+	cpu.SetR = this.CheckSetR;
+
         this.CheckRam(typeof(ramcheck) != "undefined");
     }, 
     
@@ -89,6 +95,29 @@ var kernel = {
                 kernel.DumpStack()
             }
         }
+    },
+
+    CheckSetR : function(r, v) {
+	if (r == 15) {
+	    v = v >>> 0;
+	    var threadIndex = kernel.ReadRam32(kernel.currentThreadAddress);
+	    if (threadIndex > 0 && 
+		(v < kernel.threadStack[threadIndex].start || v > kernel.threadStack[threadIndex].end)) {
+		for (var i = 0; i < kernel.threadMax; i++) {
+		    if (v >= kernel.threadStack[i].start &&
+			v < kernel.threadStack[i].end) {
+			console.log("CheckSetR: currentThread = "+threadIndex+" owner = " + i + " address = 0x" + ToHex(v) + " pc = 0x" + ToHex(cpu.GetPC()) + " pr = 0x" + ToHex(cpu.GetPR()));
+			break;
+		    }
+		}
+
+		if (i >= kernel.threadMax) {
+		    //   console.log("CheckSetR: ["+threadIndex+"] owned by [nobody] " + ToHex(v) + " " + ToHex(cpu.GetPC()) + " " + ToHex(cpu.GetPR()));
+		}
+
+	    }
+	}
+	simulator.registers.r[r] = v;
     },
     
     CheckReadRam32 : function(address) {
@@ -302,6 +331,18 @@ var kernel = {
     GetThreadTable: function ()
     {
         return cpu.threadTable = this.GetElfSymbol("_threadTable");;
+    },
+
+    GetThreadStackInfo: function ()
+    {
+	var stackSize = cpu.ReadRam32(this.GetElfSymbol("__kernel_thread_stack_size_bytes").st_value);
+
+	this.threadStack = [];
+
+       for (var i = 0; i < kernel.threadMax; i++) {
+	   var start = kernel.Read(i, 4);
+	   this.threadStack[i] = { start: start, end: start + stackSize};
+        }
     },
 
     PrintThreadTable: function ()
