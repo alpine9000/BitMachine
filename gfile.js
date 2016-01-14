@@ -177,9 +177,9 @@ GDFileSystem.prototype.Download = function(file, downloadAsText, callback) {
   if (file.downloadUrl) {
     var accessToken = gapi.auth.getToken().access_token;
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', file.downloadUrl);
+    xhr.open('GET', file.downloadUrl+'&access_token=' + encodeURIComponent(gapi.auth.getToken().access_token);
     xhr.responseType = "blob";
-    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+	     //    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
     xhr.onload = function() {
         var reader = new FileReader();
         reader.onload = function (e) {            
