@@ -101,7 +101,7 @@ var kernel = {
 	if (r == 15) {
 	    v = v >>> 0;
 	    var threadIndex = kernel.ReadRam32(kernel.currentThreadAddress);
-	    if (threadIndex > 0 && 
+	    if (threadIndex > 0 && kernel.threadStack.length > threadIndex && 
 		(v < kernel.threadStack[threadIndex].start || v > kernel.threadStack[threadIndex].end)) {
 		for (var i = 0; i < kernel.threadMax; i++) {
 		    if (v >= kernel.threadStack[i].start &&
@@ -479,6 +479,7 @@ var io = {
         button: 0
     },
     video: {
+	maxFrameBuffers: 20,
         scaling: 1,
         videoRamIndex: 0,
         frameBuffer: [],
@@ -2392,7 +2393,7 @@ function SetupPeripheral() {
     
     io.peripheral.push(GetMouseButton);
     
-    for (var fb = 0; fb < 10; fb++) {
+    for (var fb = 0; fb < io.video.maxFrameBuffers; fb++) {
         SetupVideoPeripheral(fb);
     }
     
