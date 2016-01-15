@@ -101,7 +101,7 @@ var kernel = {
 	if (r == 15) {
 	    v = v >>> 0;
 	    var threadIndex = kernel.ReadRam32(kernel.currentThreadAddress);
-	    if (threadIndex > 0 && kernel.threadStack.length > threadIndex && 
+	    if (threadIndex > 0 && kernel.threadStack.length > threadIndex &&
 		(v < kernel.threadStack[threadIndex].start || v > kernel.threadStack[threadIndex].end)) {
 		for (var i = 0; i < kernel.threadMax; i++) {
 		    if (v >= kernel.threadStack[i].start &&
