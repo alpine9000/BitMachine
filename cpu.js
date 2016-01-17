@@ -1064,7 +1064,7 @@ cpu.DIV1 = function(m, n) { /* DIV1 Rm,Rn */
                 q = tmp1 === 0;
         } else if (m == 1) {
             tmp0 = rn;
-            n = (rn - rm) >>> 0;
+            rn = (rn - rm) >>> 0;
             tmp1 = (rn > tmp0) >>> 0;
             if (q == 0)
                 q = tmp1 === 0;
