@@ -400,16 +400,6 @@ cpu.WriteRam32 = function(address, data) {
 };
 
 
-cpu.ExecWrite16 = function(address, data) {
-    //var alignedAddress = (((address >>> 0) >>> 2) << 2) >>> 0;
-    //simulator.ram[(alignedAddress - cpu.ramStart)>>>2] = data;
-    // var alignedAddress = (((address >>> 0) >>> 2) << 2) >>> 0;
-    var address = address >>> 0;
-    var data = data >>> 0;
-    var index = (address - cpu.ramStart) >>> 1;
-    cpu.ramUint16Array[index] = data & 0xFFFF;
-    };
-
 cpu.WriteRam16 = function(address, data) {
     var alignedAddress = (((address >>> 0) >>> 2) << 2) >>> 0;
     var existingData = simulator.ram[(alignedAddress - cpu.ramStart) >>> 2];
