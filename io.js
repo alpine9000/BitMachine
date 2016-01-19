@@ -1314,7 +1314,6 @@ function DirMakeDir(data, bitLength) {
 }
 
 function FileOpen(data, filename) {
-    FileAssertFD("FileOpen");
     if (filename == undefined) {
         filename = "";
         var c;
@@ -1621,26 +1620,10 @@ function FileFD(data, allocate) {
         return i;    
     } else {
         io.file.fd = data;
-	if (io.file.FDASSERT != undefined) {
-	    console.log("FileFD: without followup action!\n");
-	    alert("Fail");
-	}
-	io.file.FDASSERT = 1;
     }
-}
-
-function FileAssertFD(from)
-{
-    if (io.file.FDASSERT != 1) {
-	console.log(from + ": without valid FileFD!\n");
-    }
-    io.file.FDASSERT = undefined;
 }
 
 function FileStatus() {
-
-    FileAssertFD("FileStatus");
-
     var file = io.file.files[io.file.fd];
     if (file === undefined) {
         return 2;
@@ -1703,7 +1686,6 @@ function FileDoRead() {
 }
 
 function FileAddress(address) {
-    FileAssertFD("FileAddress");
     var file = io.file.files[io.file.fd];
     if (file === undefined) {
         return;
@@ -1740,7 +1722,6 @@ function FileWriteLength(length) {
 }
 
 function FileSeekDirection(dir) {
-    FileAssertFD("FileSeekDirection");
     // 0 == SEEK_SET, 1 == SEEK_CUR, 2 = SEEK_END
     var file = io.file.files[io.file.fd];
     if (file === undefined) {
@@ -1777,7 +1758,6 @@ function FilePosition() {
 
 function FileCloseStatus(data)
 {
-    FileAssertFD("FileCloseStatus");
     var file = io.file.files[io.file.fd];
     
     if (file !== undefined) {
@@ -1801,7 +1781,6 @@ function FileCloseStatus(data)
 }
 
 function FileClose() {
-    FileAssertFD("FileClose");
     var file = io.file.files[io.file.fd];
     
     if (file !== undefined) {
@@ -1871,7 +1850,7 @@ function ElfKernelLoadFromFile(filename, cmd) {
 }
 
 function ElfKernelLoad(fd) {
-    FileAssertFD("ElfKernelLoad");
+
     require(["elf"], function() {
         var file = io.file.files[io.file.fd];
         var elf = new Elf32(file.data);
@@ -1905,7 +1884,6 @@ function ElfKernelLoad(fd) {
 }
 
 function FileElfLoad(fd) {
-    FileAssertFD("FileElfLoad");
     var file = io.file.files[io.file.fd];
     if (file === undefined || file.status != 1) {
         return 0;
