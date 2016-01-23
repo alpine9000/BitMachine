@@ -617,7 +617,7 @@ function FileSystemStat(sd)
                io.file.stat[sd].status = -1;
            });
         });
-    } else {
+    } else if (fstype == "gdfs"){
         var gdfs = new GDFileSystem().done(function(o) {
                    // TODO: implement the extra stuff done for local filesystem above     
             this.stat(remoteFilename).done(function(file) {
@@ -651,6 +651,8 @@ function FileSystemStat(sd)
                io.file.stat[sd].status = -1;
            });
         });
+    } else {
+	io.file.stat[sd].status = -1;
     }
 }
 
@@ -1639,6 +1641,7 @@ function FileRead() {
     }
     
     if (file.pipe !== undefined) {
+
         if (file.pipe.length > 0) {
             return file.pipe.shift()>>>0;
         } else if (file.pipe.length == 0 && file.pipe.closed == true) { // Pipe closed, and empty
@@ -1669,6 +1672,10 @@ function FileReadLength(length) {
 }
 
 function FileDoRead() {
+    if (io.file.files[io.file.fd] == undefined) {
+	return 0;
+    }
+
     var i;
     for (i = 0; i < io.file.files[io.file.fd].readLength; ++i) {
 	var val = FileRead();

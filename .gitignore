@@ -1,5 +1,9 @@
 # Emacs backup files
 *~
 
+BitFS/*
+*.elf
+*.zip
+
 # OSX crap
 .DS_Store

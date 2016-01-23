@@ -149,7 +149,7 @@ $(document).ready(function() {
 	$("#load-bitos-from-web-torture").on("click", function(e) {
         e.preventDefault();
         //$("body").addClass("bitos");
-        BootSimulator("/web/BitFS/bitos.elf", "test 2"); 
+        BootSimulator("/web/BitFS/bitos.elf", "bsh test 2"); 
 	});
 	
 	
