@@ -1668,8 +1668,8 @@ function FileRead() {
         }
     } else {
         var fp = file.fp;
-        
-        if (fp >= file.data.byteLength) {
+ 
+        if (file.data === undefined || fp >= file.data.byteLength) {
             return -1;
         } else {
             var c = file.dataView.getUint8(fp++);
