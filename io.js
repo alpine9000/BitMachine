@@ -1615,6 +1615,22 @@ function FileFlags(data) {
 
 var fileFD = 5;
 
+
+function FileOptions(data, bitLength) {
+    if (bitLength !== undefined) { //Read 
+	if (io.file.files[io.file.fd] != undefined) {
+	    return io.file.files[io.file.fd].options  != undefined ? io.file.files[io.file.fd].options : 0;
+	} 
+	return 0;
+    }
+
+    if (io.file.files[io.file.fd] != undefined) {
+	io.file.files[io.file.fd].options = data;
+    }
+}
+
+
+
 function FileFD(data, allocate) {
     if (typeof(allocate) !== "undefined") {
         var i = fileFD++;   
@@ -1826,7 +1842,12 @@ function FileClose() {
         }
         
         if (file.pipe !== undefined && file.pipe.closed === undefined) {
-            file.pipe.closed = true;
+	    if (file.options & 0x4000) { // Non blocking IO
+		file.closeStatus = 0;
+		delete file.pipe;
+	    } else {
+		file.pipe.closed = true;
+	    }
         }
         return 0;
     } else {
@@ -2309,6 +2330,8 @@ function SetupPeripheral() {
     io.peripheral.push(FileOpen);
     
     io.peripheral.push(FileFlags);
+
+    io.peripheral.push(FileOptions);
 
     io.peripheral.push(FileStat);    
     

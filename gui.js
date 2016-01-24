@@ -146,6 +146,10 @@ $(document).ready(function() {
         BootSimulator("/web/BitFS/bitos.elf", "kernel"); 
 	});
 
+	if (window.location.hostname == "localhost") {
+	    $("#load-bitos-from-web").click();
+	}
+
 	$("#load-bitos-from-web-torture").on("click", function(e) {
         e.preventDefault();
         //$("body").addClass("bitos");
