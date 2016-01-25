@@ -125,9 +125,16 @@ $(document).ready(function() {
             InitialiseBitFS("/web/BitFS/filesystem.zip"); 
         });  
 	});
-	
 
-	
+	$("#install-tests-from-web").on("click", function(e) {
+        e.preventDefault();
+        GetDisa().done(function() {
+            GetGui().Ready();
+            $("#disa-viewer-tab").click();
+            UnzipFile("/web/BitFS/tests.zip", "/bitfs/usr/local/home/tests"); 
+        });  
+	});
+		
 	$("#load-bitos-from-local").on("click", function(e) {
         e.preventDefault();
         //$("body").addClass("bitos");

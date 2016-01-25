@@ -1786,7 +1786,10 @@ function FileCloseStatus(data)
     if (file !== undefined) {
 
         if (file.pipe !== undefined) {
-            return 1;
+	    if (file.options & 0x4000) { // non blocking op
+		return 0;
+	    }
+	    return 1;
         } else {
             var status = file.closeStatus;
             if (status === 0) {
@@ -1841,12 +1844,13 @@ function FileClose() {
             file.closeStatus = 0;
         }
         
-        if (file.pipe !== undefined && file.pipe.closed === undefined) {
-	    if (file.options & 0x4000) { // Non blocking IO
-		file.closeStatus = 0;
-		delete file.pipe;
-	    } else {
+        if (file.pipe !== undefined) {
+	    if (file.pipe.closed === undefined) {
 		file.pipe.closed = true;
+	    } else {
+		if (file.pipe.length == 0) {
+		    delete file.pipe;
+		}
 	    }
         }
         return 0;
@@ -2547,9 +2551,19 @@ function Unzip(filename, dest)
     });
 }
 
+function UnzipFile(filename, dest)
+{
+    if (confirm("Install tests ?")) {
+	simulator.Reset();
+	$(".bitos-progress").removeClass("hidden");
+	Unzip(filename, dest);    
+    }    
+}
+
 function InitialiseBitFS(filename)
 {
     if (confirm("Initialise filesystem ?")) {
+	simulator.Reset();
 	    new FileSystem().done(function() {
 	        var _this = this;
 	        this.rm("/bitfs").always(function() {
