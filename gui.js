@@ -134,6 +134,15 @@ $(document).ready(function() {
             UnzipFile("Install tests?", "/web/BitFS/tests.zip", "/bitfs/usr/local/home/tests"); 
         });  
 	});
+
+	$("#install-tests-from-gdfs").on("click", function(e) {
+        e.preventDefault();
+        GetDisa().done(function() {
+            GetGui().Ready();
+            $("#disa-viewer-tab").click();
+            UnzipFile("Install tests?", "/gdrive/tests.zip", "/bitfs/usr/local/home/tests"); 
+        });  
+	});
 		
 	$("#load-bitos-from-local").on("click", function(e) {
         e.preventDefault();
