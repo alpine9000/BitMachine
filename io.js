@@ -907,7 +907,7 @@ function CreateFrameBuffer(index, w, h) {
 
 function ResetVideo() {
     io.video.scaling = 1.0 * io.devicePixelRatio;
-    var w = 1140, h = 768;
+    var w = 1140, h = 740;
     io.video.frameBuffer[0] = CreateFrameBuffer(0, w, h);
 }
 
@@ -1903,6 +1903,7 @@ function ElfKernelLoad(fd) {
                         $("#disa-viewer-tab").click();
                         $("#disa-simulator-reset").click();
                         $("#disa-simulator-execute").click();
+			$("#disa-display").focus();
                     }
                     if (loaded) {
                         this.Init(mapEdit.map).always(_done);
@@ -2551,12 +2552,19 @@ function Unzip(filename, dest)
     });
 }
 
-function UnzipFile(filename, dest)
+function UnzipFile(confirmMessage, filename, dest)
 {
-    if (confirm("Install tests ?")) {
+    if (confirm(confirmMessage)) {
 	simulator.Reset();
-	$(".bitos-progress").removeClass("hidden");
-	Unzip(filename, dest);    
+	new FileSystem().done(function() {
+		var _this = this;
+	        this.rm(dest).always(function() {
+			_this.mkdir(dest).always(function() {
+				$(".bitos-progress").removeClass("hidden");
+				Unzip(filename, dest);    
+			    });
+		    });
+	});
     }    
 }
 

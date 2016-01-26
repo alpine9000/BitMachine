@@ -131,7 +131,7 @@ $(document).ready(function() {
         GetDisa().done(function() {
             GetGui().Ready();
             $("#disa-viewer-tab").click();
-            UnzipFile("/web/BitFS/tests.zip", "/bitfs/usr/local/home/tests"); 
+            UnzipFile("Install tests?", "/web/BitFS/tests.zip", "/bitfs/usr/local/home/tests"); 
         });  
 	});
 		
