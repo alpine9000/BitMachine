@@ -1136,13 +1136,13 @@ function StartStopWatch(data) {
 
 function StopStopWatch(data) {
     simulator.swStopTime = new Date().getTime();
-    var instructions = simulator.instructionCount - simulator.swInstructionCount;
-    var elapsed = simulator.swStopTime - simulator.swStartTime;
-    ("Executed " + instructions + " instructions  in " + elapsed + " ms (" + ((instructions / (elapsed / 1000)) / 1000000) + " MIPS)");
+    // var instructions = simulator.instructionCount - simulator.swInstructionCount;
+    //    var elapsed = simulator.swStopTime - simulator.swStartTime;
+    //    ("Executed " + instructions + " instructions  in " + elapsed + " ms (" + ((instructions / (elapsed / 1000)) / 1000000) + " MIPS)");
 }
 
 function GetStopWatchElapsed() {
-    return simulator.swStopTime - simulator.swStartTime;
+    return new Date().getTime() - simulator.swStartTime;
 }
 
 function KernelEnableTrace(data)
