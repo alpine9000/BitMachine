@@ -546,7 +546,7 @@ simulator.Simulate = function() {
    /* var fps = $("#disa-fps");
     var fpsCount = 0;*/
     
-    simulator.simulateStartTime = timeGettingThingy.now();
+    simulator.simulateStartTime = simulator.timeGettingThingy.now();
     //var lastTime = 0;
 
     simulator.SimulateBlock();
