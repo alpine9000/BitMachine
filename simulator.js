@@ -462,7 +462,7 @@ simulator.SimulateBlockDone = function() {
    
    
    if (s.stop || s.notImplemented) {
-       done();
+       simulator.SimulateBlockDone();
        return;
    }
    io.vblank = true;
