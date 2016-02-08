@@ -457,87 +457,86 @@ simulator.SimulateBlockDone = function() {
 }
 
  simulator.SimulateBlock = function (){ 
-      var s = simulator;
-      var count, max = s.blockSize;
-      
-      
-      if (s.stop || s.notImplemented) {
-          done();
-          return;
-      }
-      io.vblank = true;
-      s.yield = false;
-      var startAddress = s.address;
-      var blockStart = simulator.timeGettingThingy.now();
-      io.time = Date.now();
-      var time = blockStart >>>0;
-      io.elapsedTime = time - simulator.simulateStartTime;
-    
-      /*if (io.ktrace !== undefined) {
-          io.ktrace.push({ id: "TICK", time: blockStart});
-      }*/
-      
-      if (s.delayedBranch !== undefined) {
-          s.Step();
-      }
-      
-      cpu.ProcessInterrupt({ level: 15, vector: 2}); // WDT 
-    
-      if (s.breakpoints !== undefined) {
-          
-         for (count = 0; s.yield === false && count < max; ++count) {    
-              if (startAddress != s.address && s.breakpoints[s.address] !== undefined) {
-                  s.stop = true;
-                  break;
-              } else {
-                  s.Step();   
-              }
-          }
-      } else {
-          /*for (count = 0; s.yield === false && count < max; ++count) {
-              s.Step();
-          }*/
-          
-          //for (count = 0; s.yield === false && count < max; count+=10000) {
-          while (s.yield === false) {
-              var t = simulator.timeGettingThingy.now();
-              if (t-blockStart < 32) { //32 is "faster", 16 is "real"
-                  for (var inner = 0; s.yield === false && inner < 10000; ++inner) {    
-                      s.Step();
-                  }
-              } else {
-                  break;
-              }
-          }
-          
-          /*if (io.ktrace !== undefined) {
-              if (s.yield) {
-                  io.ktrace.push({ action: "YIELD", time: blockStart}); 
-              } else if (s.count >= max) {
-                  io.ktrace.push({ action: "MAX", time: blockStart}); 
-              } else {
-                  io.ktrace.push({ action: "TIME", time: blockStart}); 
-              }
-          }*/
-      }
-      
-      /*if (++fpsCount == 10) {
-          fpsCount = 0;
-          s.fps = 10000/(io.time - lastTime);
-          lastTime = io.time;
-          fps.text(parseInt(s.fps+0.5, 10));
-      }*/
-      
-      
-      if (!s.stop) {
-          /*if (io.ktrace !== undefined) {
-              io.ktrace.push({ action: "TOCK", time: window.performance.now()});
-          }*/
-          window.requestAnimationFrame(simulator.SimulateBlock);
-      } else {
-          simulator.SimulateBlockDone();
-      }
-  }
+   var s = simulator;
+   var count, max = s.blockSize;
+   
+   
+   if (s.stop || s.notImplemented) {
+       done();
+       return;
+   }
+   io.vblank = true;
+   s.yield = false;
+   var startAddress = s.address;
+   var blockStart = simulator.timeGettingThingy.now();
+   io.time = Date.now();
+   var time = blockStart >>>0;
+   io.elapsedTime = time - simulator.simulateStartTime;
+ 
+   /*if (io.ktrace !== undefined) {
+       io.ktrace.push({ id: "TICK", time: blockStart});
+   }*/
+   
+   if (s.delayedBranch !== undefined) {
+       s.Step();
+   }
+   
+   cpu.ProcessInterrupt({ level: 15, vector: 2}); // WDT 
+ 
+   if (s.breakpoints !== undefined) {
+       
+      for (count = 0; s.yield === false && count < max; ++count) {    
+           if (startAddress != s.address && s.breakpoints[s.address] !== undefined) {
+               s.stop = true;
+               break;
+           } else {
+               s.Step();   
+           }
+       }
+   } else {
+       /*for (count = 0; s.yield === false && count < max; ++count) {
+           s.Step();
+       }*/
+       
+       //for (count = 0; s.yield === false && count < max; count+=10000) {
+       while (s.yield === false) {
+           var t = simulator.timeGettingThingy.now();
+           if (t-blockStart < 32) { //32 is "faster", 16 is "real"
+               for (var inner = 0; s.yield === false && inner < 10000; ++inner) {    
+                   s.Step();
+               }
+           } else {
+               break;
+           }
+       }
+       
+       /*if (io.ktrace !== undefined) {
+           if (s.yield) {
+               io.ktrace.push({ action: "YIELD", time: blockStart}); 
+           } else if (s.count >= max) {
+               io.ktrace.push({ action: "MAX", time: blockStart}); 
+           } else {
+               io.ktrace.push({ action: "TIME", time: blockStart}); 
+           }
+       }*/
+   }
+   
+   /*if (++fpsCount == 10) {
+       fpsCount = 0;
+       s.fps = 10000/(io.time - lastTime);
+       lastTime = io.time;
+       fps.text(parseInt(s.fps+0.5, 10));
+   }*/
+   
+   
+   if (!s.stop) {
+       /*if (io.ktrace !== undefined) {
+           io.ktrace.push({ action: "TOCK", time: window.performance.now()});
+       }*/
+       window.requestAnimationFrame(simulator.SimulateBlock);
+   } else {
+       simulator.SimulateBlockDone();
+   }
 }
     
 
