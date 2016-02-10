@@ -11,6 +11,7 @@
 // Moves (R4) = (FFFFF004)[SCI_SSR0_B] to R0
 //SCI1 RXI1 H'00000334 = 0xFFF84
 
+"use strict";
 
 var simulator = {
         instructionCache: [],
