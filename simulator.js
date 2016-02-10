@@ -12,6 +12,7 @@
 //SCI1 RXI1 H'00000334 = 0xFFF84
 
 
+'use strict';
 var simulator = {
         instructionCache: [],
         instructionProcessors: [ function() { }],
