@@ -540,7 +540,7 @@ simulator.SimulateBlockDone = function() {
 }
     
 
-simulator.NewSimulate = function() {    
+simulator.Simulate = function() {    
     simulator.stop = false;
     simulator.notImplemented = undefined;
    /* var fps = $("#disa-fps");
@@ -552,7 +552,7 @@ simulator.NewSimulate = function() {
     simulator.SimulateBlock();
 };
 
-simulator.Simulate = function() {    
+simulator.OldSimulate = function() {    
     simulator.stop = false;
     simulator.notImplemented = undefined;
     var fps = $("#disa-fps");
