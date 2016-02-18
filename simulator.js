@@ -52,7 +52,8 @@ var simulator = {
         uninitialisedRam: {},
         instructionCount: 0,
         stop: true,
-        yield: false
+        yield: false,
+        innerCount: 10000
     };   
 
 simulator.log = function(s) {
@@ -470,6 +471,7 @@ simulator.SimulateBlockDone = function() {
    var blockStart = simulator.timeGettingThingy.now();
    io.time = Date.now();
    var time = blockStart >>>0;
+   var innerCount = simulator.innerCount;
    io.elapsedTime = time - simulator.simulateStartTime;
  
    /*if (io.ktrace !== undefined) {
@@ -501,7 +503,7 @@ simulator.SimulateBlockDone = function() {
        while (s.yield === false) {
            var t = simulator.timeGettingThingy.now();
            if (t-blockStart < 32) { //32 is "faster", 16 is "real"
-               for (var inner = 0; s.yield === false && inner < 10000; ++inner) {    
+               for (var inner = 0; s.yield === false && inner < innerCount; ++inner) {    
                    s.Step();
                }
            } else {
