@@ -501,9 +501,9 @@ simulator.SimulateBlockDone = function() {
        while (s.yield === false) {
            var t = simulator.timeGettingThingy.now();
            if (t-blockStart < 32) { //32 is "faster", 16 is "real"
-               for (var inner = 0; s.yield === false && inner < 10000; ++inner) {    
+               //for (var inner = 0; s.yield === false && inner < 10000; ++inner) {    
                    s.Step();
-               }
+               //}
            } else {
                break;
            }
