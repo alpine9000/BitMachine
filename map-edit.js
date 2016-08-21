@@ -815,7 +815,7 @@ $(document).ready(function() {
             GetMapEdit().LoadLastMap(selectTab);
         }*/
 
-	var fileIds = getURLParameter("ids");
+	var fileIds = getURLParameter("state");
 
         if (fileIds !== undefined && fileIds != "null") {
             new GDFileSystem().done(function() {
