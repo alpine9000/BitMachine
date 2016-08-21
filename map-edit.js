@@ -801,7 +801,8 @@ $(document).ready(function() {
     }
 
     (function() {
-        var fileIds = getURLParameter("ids");
+       
+	/*var fileIds = getURLParameter("ids");
 
         if (fileIds !== undefined && fileIds != "null") {
             new GDFileSystem().done(function() {
@@ -812,6 +813,21 @@ $(document).ready(function() {
             });
         } else {
             GetMapEdit().LoadLastMap(selectTab);
+        }*/
+
+	var fileIds = getURLParameter("ids");
+
+        if (fileIds !== undefined && fileIds != "null") {
+            new GDFileSystem().done(function() {
+                var gdfs = this;
+                common.multiDeferred(JSON.parse(fileIds).ids, function(id) {
+                    return GetMapEdit().LoadFromGdfs(gdfs, id);
+                }).done(selectTab);
+            });
+        } else {
+            GetMapEdit().LoadLastMap(selectTab);
         }
+
+
     })();
 });
